@@ -31,10 +31,13 @@ export const WEAPON_KINDS = [
 export type WeaponKind = (typeof WEAPON_KINDS)[number];
 
 const int = z.number().int();
-const ItemId = z.string().regex(/^[a-z][A-Za-z0-9]*$/);
+export const ItemIdSchema = z.string().regex(/^[a-z][A-Za-z0-9]*$/);
+const ItemId = ItemIdSchema;
 const Ordinal = z.string().regex(/^[1-9]\d*$/);
 
-export const Range = z.strictObject({ min: int.optional(), max: int.optional() });
+export const Range = z
+  .strictObject({ min: int.optional(), max: int.optional() })
+  .refine((r) => r.min === undefined || r.max === undefined || r.min <= r.max, 'range min exceeds max');
 export type Range = z.infer<typeof Range>;
 
 export type Condition =
@@ -122,7 +125,7 @@ export type ItemDef = z.infer<typeof ItemDef>;
 const Digit = z.enum(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
 
 export const Setup = z.strictObject({
-  disciplines: int.positive(),
+  disciplines: int.positive().max(DISCIPLINES.length),
   items: z.array(ItemId),
   goldBase: int.nonnegative(),
   randomItem: z.record(

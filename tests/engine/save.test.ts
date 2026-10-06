@@ -1,16 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import {
+  ENGINE_VERSION,
   IllegalAction,
+  IncompatibleSave,
+  InvalidSave,
   apply,
+  buildEngineBook,
   availableActions,
   exportCharacter,
   maxEndurance,
   newGame,
+  newSave,
   replay,
   type Action,
   type GameState,
 } from '../../src/engine';
-import { book } from './fixture';
+import { book, imported, rules } from './fixture';
 
 // A seeded random player, independent of the engine's own RNG.
 function play(seed: number, maxSteps = 300) {
@@ -37,12 +42,27 @@ describe('saves', () => {
   it('replay to exactly the same state', () => {
     for (let seed = 0; seed < 30; seed++) {
       const { state, actions } = play(seed);
-      expect(replay(book, { version: 1, book: 'test', sourceSha256: 'synthetic', seed, actions })).toEqual(state);
+      expect(replay(book, { ...newSave(book, seed), actions })).toEqual(state);
     }
   });
 
-  it('are refused for a different book or edition', () => {
-    expect(() => replay(book, { version: 1, book: 'test', sourceSha256: 'other', seed: 1, actions: [] })).toThrow();
+  it('are refused, not reinterpreted, when the edition, rules or engine differ', () => {
+    const { actions } = play(3);
+    const save = { ...newSave(book, 3), actions };
+    const richer = buildEngineBook(imported, { ...rules, setup: { ...rules.setup, goldBase: 10 } });
+    expect(() => replay(richer, save)).toThrow(IncompatibleSave);
+    expect(() => replay(book, { ...save, sourceSha256: 'other' })).toThrow(IncompatibleSave);
+    expect(() => replay(book, { ...save, engine: ENGINE_VERSION + 1 })).toThrow(IncompatibleSave);
+  });
+
+  it('are validated completely before replay', () => {
+    const save = newSave(book, 1);
+    expect(() => replay(book, { ...save, actions: '' })).toThrow(InvalidSave);
+    expect(() => replay(book, { ...save, version: 999 })).toThrow(InvalidSave);
+    const { seed: _, ...unseeded } = save;
+    expect(() => replay(book, unseeded)).toThrow(InvalidSave);
+    expect(() => replay(book, { ...save, actions: [{ type: 'teleport' }] })).toThrow(InvalidSave);
+    expect(() => replay(book, { ...save, actions: [{ type: 'fight' }] })).toThrow(IllegalAction);
   });
 
   it('are made of legal actions only', () => {

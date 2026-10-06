@@ -11,7 +11,6 @@ import type {
   GameState,
   ItemId,
   RollPurpose,
-  SaveGame,
 } from './types';
 
 const WEAPONSKILL_TABLE: readonly WeaponKind[] = [
@@ -68,7 +67,7 @@ export function startAt(book: EngineBook, seed: number, character: Character, se
 
 export function maxEndurance(book: EngineBook, c: Character): number {
   let max = c.baseEndurance;
-  for (const id of c.specialItems) {
+  for (const id of new Set(c.specialItems)) {
     const def = book.items[id];
     if (def?.slot === 'special') max += def.endurance ?? 0;
   }
@@ -124,7 +123,9 @@ function sectionActions(book: EngineBook, s: GameState): Action[] {
   if (pending.kind === 'combat') {
     const e = currentEffect(book, s) as CombatEffect;
     const actions: Action[] = [{ type: 'fight' }];
-    if (e.evade && pending.rounds >= e.evade.afterRounds) actions.push({ type: 'evade' });
+    if (e.evade && pending.rounds >= e.evade.afterRounds && choiceAllowed(book, s, e.evade.choice)) {
+      actions.push({ type: 'evade' });
+    }
     return actions;
   }
   const c = s.character;
@@ -146,12 +147,13 @@ export function availableChoices(book: EngineBook, s: GameState): number[] {
   const def = sectionDef(book, s.section!.number);
   const evadeOnly = new Set((def.rules.effects ?? []).flatMap((e) => (e.op === 'combat' && e.evade ? [e.evade.choice] : [])));
   return def.choices
-    .filter((ch) => !evadeOnly.has(ch.ordinal))
-    .filter((ch) => {
-      const rule = def.rules.choices?.[String(ch.ordinal)];
-      return !rule?.when || holds(book, s, rule.when);
-    })
+    .filter((ch) => !evadeOnly.has(ch.ordinal) && choiceAllowed(book, s, ch.ordinal))
     .map((ch) => ch.ordinal);
+}
+
+function choiceAllowed(book: EngineBook, s: GameState, ordinal: number): boolean {
+  const rule = sectionDef(book, s.section!.number).rules.choices?.[String(ordinal)];
+  return !rule?.when || holds(book, s, rule.when);
 }
 
 export function apply(book: EngineBook, state: GameState, action: Action): { state: GameState; events: GameEvent[] } {
@@ -224,6 +226,9 @@ export function apply(book: EngineBook, state: GameState, action: Action): { sta
       const e = currentEffect(book, s) as CombatEffect;
       const pending = s.section!.pending as { rounds: number };
       if (pending.rounds > 0) fightRound(book, s, ev, true);
+      if (s.phase !== 'section') break;
+      const rule = sectionDef(book, s.section!.number).rules.choices?.[String(e.evade!.choice)];
+      for (const effect of rule?.effects ?? []) applyAuto(book, s, ev, effect);
       if (s.phase !== 'section') break;
       const target = choiceTarget(book, s, e.evade!.choice);
       ev.push({ type: 'evaded', to: target });
@@ -373,8 +378,8 @@ function gain(book: EngineBook, c: Character, ev: GameEvent[], item: ItemId): vo
   if (def.slot === 'weapon') c.weapons.push(item);
   else if (def.slot === 'backpack') c.backpack.push(item);
   else {
+    if (!c.specialItems.includes(item)) c.endurance += def.endurance ?? 0;
     c.specialItems.push(item);
-    c.endurance += def.endurance ?? 0;
   }
   ev.push({ type: 'itemGained', item });
 }
@@ -469,15 +474,6 @@ function inRange(x: number, r: Range): boolean {
 function sameAction(a: Action, b: Action): boolean {
   const key = (x: Action) => JSON.stringify(Object.entries(x).sort(([p], [q]) => p.localeCompare(q)));
   return key(a) === key(b);
-}
-
-export function replay(book: EngineBook, save: SaveGame): GameState {
-  if (save.book !== book.id || save.sourceSha256 !== book.sourceSha256) {
-    throw new Error(`save is for ${save.book} (${save.sourceSha256}), not ${book.id} (${book.sourceSha256})`);
-  }
-  let s = newGame(save.seed);
-  for (const action of save.actions) s = apply(book, s, action).state;
-  return s;
 }
 
 export function exportCharacter(book: EngineBook, s: GameState): CharacterRecord {

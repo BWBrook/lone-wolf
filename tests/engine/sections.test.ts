@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { apply, availableActions, availableChoices, startAt, type Action, type GameState } from '../../src/engine';
+import { apply, availableActions, availableChoices, maxEndurance, startAt, type Action, type GameState } from '../../src/engine';
 import { book, character } from './fixture';
 
 const act = (s: GameState, a: Action) => apply(book, s, a);
@@ -91,6 +91,18 @@ describe('items', () => {
     const s = at(6, { specialItems: ['helmet'], baseEndurance: 25, endurance: 27, disciplines: ['mindshield'] });
     expect(s.character.endurance).toBe(27);
     expect(act(s, { type: 'drop', item: 'helmet' }).state.character.endurance).toBe(25);
+  });
+
+  it('count an armour bonus once however many copies are carried', () => {
+    let s = at(4, { specialItems: ['map', 'helmet'], baseEndurance: 25, endurance: 27 });
+    s = act(s, { type: 'take', item: 'helmet' }).state;
+    expect(s.character.specialItems).toEqual(['map', 'helmet', 'helmet']);
+    expect(s.character.endurance).toBe(27);
+    expect(maxEndurance(book, s.character)).toBe(27);
+    s = act(s, { type: 'drop', item: 'helmet' }).state;
+    expect(s.character.endurance).toBe(27);
+    s = act(s, { type: 'drop', item: 'helmet' }).state;
+    expect(s.character.endurance).toBe(25);
   });
 
   it('heal with a potion outside combat, but not before a combat in the same section', () => {

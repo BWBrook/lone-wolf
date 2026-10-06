@@ -1,7 +1,18 @@
 import './style.css';
-import { apply, exportCharacter, newGame, replay, type Action, type GameEvent, type GameState, type SaveGame } from '../engine';
+import {
+  apply,
+  exportCharacter,
+  newGame,
+  newSave,
+  parseSave,
+  replay,
+  type Action,
+  type GameEvent,
+  type GameState,
+  type SaveGame,
+} from '../engine';
 import { demoBook } from './demo';
-import { render } from './render';
+import { render, renderRecovery } from './render';
 
 const book = demoBook;
 const root = document.getElementById('app')!;
@@ -13,16 +24,20 @@ let events: GameEvent[] = [];
 let shownSection: number | null = null;
 
 function start(seed = crypto.getRandomValues(new Uint32Array(1))[0]!) {
-  save = { version: 1, book: book.engine.id, sourceSha256: book.engine.sourceSha256, seed, actions: [] };
+  save = newSave(book.engine, seed);
   state = newGame(seed);
   events = [];
   persist();
   draw();
 }
 
-function restore(saved: SaveGame) {
-  state = replay(book.engine, saved);
-  save = saved;
+// Validates and replays before touching the current game, so a bad save throws
+// and leaves everything as it was.
+function restore(data: unknown) {
+  const parsed = parseSave(data);
+  const restored = replay(book.engine, parsed);
+  save = parsed;
+  state = restored;
   events = [];
   persist();
   draw();
@@ -30,9 +45,9 @@ function restore(saved: SaveGame) {
 
 function act(action: Action) {
   const result = apply(book.engine, state, action);
+  save = { ...save, actions: [...save.actions, action] };
   state = result.state;
   events = result.events;
-  save.actions.push(action);
   persist();
   draw();
 }
@@ -45,10 +60,9 @@ function persist() {
   }
 }
 
-function download(name: string, data: unknown) {
-  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
-  const a = Object.assign(document.createElement('a'), { href: url, download: name });
-  a.click();
+function download(name: string, text: string) {
+  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  Object.assign(document.createElement('a'), { href: url, download: name }).click();
   URL.revokeObjectURL(url);
 }
 
@@ -59,7 +73,7 @@ function draw() {
     events,
     act,
     newGame: () => start(),
-    downloadSave: () => download(`${book.engine.id}-save.json`, save),
+    downloadSave: () => download(`${book.engine.id}-save.json`, JSON.stringify(save, null, 2)),
     uploadSave: async (file) => {
       try {
         restore(JSON.parse(await file.text()));
@@ -67,26 +81,34 @@ function draw() {
         alert(`That save could not be loaded: ${(err as Error).message}`);
       }
     },
-    exportCharacter: () => download(`${book.engine.id}-character.json`, exportCharacter(book.engine, state)),
+    exportCharacter: () =>
+      download(`${book.engine.id}-character.json`, JSON.stringify(exportCharacter(book.engine, state), null, 2)),
   });
   const section = state.section?.number ?? null;
   if (section !== shownSection) window.scrollTo({ top: 0 });
   shownSection = section;
 }
 
-function load(): SaveGame | null {
+function stored(): string | null {
   try {
-    const raw = localStorage.getItem(storageKey);
-    return raw ? JSON.parse(raw) : null;
+    return localStorage.getItem(storageKey);
   } catch {
     return null;
   }
 }
 
-const saved = load();
-try {
-  if (saved) restore(saved);
-  else start();
-} catch {
+const raw = stored();
+if (raw === null) {
   start();
+} else {
+  try {
+    restore(JSON.parse(raw));
+  } catch (err) {
+    renderRecovery(root, {
+      title: book.title,
+      reason: (err as Error).message,
+      download: () => download(`${book.engine.id}-unreadable-save.json`, raw),
+      newGame: () => start(),
+    });
+  }
 }

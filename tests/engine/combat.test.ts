@@ -95,6 +95,16 @@ describe('combat rounds', () => {
     }
   });
 
+  it("applies the evade choice's own conditions and effects", () => {
+    expect(availableActions(book, startAt(book, 1, character({ gold: 0 }), 12))).toEqual([{ type: 'fight' }]);
+    const s = startAt(book, 1, character({ gold: 10 }), 12);
+    expect(availableActions(book, s)).toContainEqual({ type: 'evade' });
+    const { state, events } = act(s, { type: 'evade' });
+    expect(events.some((e) => e.type === 'combatRound')).toBe(false); // no round fought yet
+    expect(state.character.gold).toBe(5);
+    expect(state.section!.number).toBe(6);
+  });
+
   it('ends the adventure when the hero is killed', () => {
     let s = startAt(book, 3, character({ combatSkill: 10, endurance: 2 }), 11);
     s = act(s, { type: 'continue' }).state;

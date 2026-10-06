@@ -31,6 +31,7 @@ export interface EngineSection extends ImportedSection {
 export interface EngineBook {
   id: string;
   sourceSha256: string;
+  rulesFingerprint: string;
   finalSection: number;
   items: Record<ItemId, ItemDef>;
   setup: Setup;
@@ -116,10 +117,14 @@ export type GameEvent =
   | { type: 'died' }
   | { type: 'won' };
 
+// A save replays from its seed, so it is valid only for the same book edition,
+// the same rules data and the same engine semantics.
 export interface SaveGame {
   version: 1;
+  engine: number;
   book: string;
   sourceSha256: string;
+  rulesFingerprint: string;
   seed: number;
   actions: Action[];
 }

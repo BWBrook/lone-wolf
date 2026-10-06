@@ -16,6 +16,7 @@ export const imported: ImportedBook = {
     { number: 9, choices: [], combats: [], deadEnd: false },
     { number: 10, choices: [c(1, 5)], combats: [], deadEnd: false },
     { number: 11, choices: [c(1, 5)], combats: [{ combatSkill: 30, endurance: 50 }], deadEnd: false },
+    { number: 12, choices: [c(1, 5), c(2, 6)], combats: [{ combatSkill: 12, endurance: 8 }], deadEnd: false },
   ],
 };
 
@@ -54,7 +55,7 @@ export const rules = {
     '1': { choices: { '2': { when: { discipline: 'tracking' } }, '3': { when: { item: 'key' } } } },
     '2': { effects: [{ op: 'combat', combat: 0, evade: { afterRounds: 1, choice: 2 } }] },
     '3': { effects: [{ op: 'meal' }] },
-    '4': { effects: [{ op: 'pickup', items: ['sword', 'potion', 'key'] }] },
+    '4': { effects: [{ op: 'pickup', items: ['sword', 'potion', 'key', 'helmet'] }] },
     '5': {
       effects: [{ op: 'random', modifiers: [{ add: 2, when: { discipline: 'sixthSense' } }] }],
       choices: { '1': { when: { random: { max: 4 } } }, '2': { when: { random: { min: 5 } } } },
@@ -65,6 +66,10 @@ export const rules = {
     '9': {},
     '10': { effects: [{ op: 'meal', hunting: false }] },
     '11': { effects: [{ op: 'pickup', items: ['potion'] }, { op: 'combat', combat: 0 }] },
+    '12': {
+      effects: [{ op: 'combat', combat: 0, evade: { afterRounds: 0, choice: 2 } }],
+      choices: { '2': { when: { gold: { min: 5 } }, effects: [{ op: 'gold', delta: -5 }] } },
+    },
   },
 };
 

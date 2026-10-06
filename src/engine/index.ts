@@ -10,8 +10,8 @@ export {
   holds,
   maxEndurance,
   newGame,
-  replay,
   startAt,
 } from './engine';
 export * from './rules';
+export { ENGINE_VERSION, IncompatibleSave, InvalidSave, newSave, parseSave, replay } from './save';
 export type * from './types';

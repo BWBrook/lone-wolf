@@ -53,6 +53,41 @@ export function render(root: HTMLElement, v: View): void {
   root.replaceChildren(header(v), h('main', {}, story(v, can, button), chart(v, can)));
 }
 
+// Shown when the stored save cannot be restored. Nothing is overwritten until
+// the player explicitly starts a new game.
+export function renderRecovery(
+  root: HTMLElement,
+  r: { title: string; reason: string; download(): void; newGame(): void },
+): void {
+  root.replaceChildren(
+    h('header', {}, h('h1', {}, r.title)),
+    h(
+      'main',
+      {},
+      h(
+        'section',
+        { class: 'story' },
+        h('h2', {}, 'Your saved game could not be loaded'),
+        h('p', {}, `${r.reason}.`),
+        h('p', {}, 'It has been kept unchanged in this browser. Download it first if you want to keep a copy.'),
+        h(
+          'div',
+          { class: 'choices' },
+          h('button', { onclick: r.download }, 'Download the saved game'),
+          h(
+            'button',
+            {
+              class: 'primary',
+              onclick: () => confirm('Start a new game? This replaces the saved game in this browser.') && r.newGame(),
+            },
+            'Start a new game',
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 function header(v: View) {
   const file = h('input', {
     type: 'file',

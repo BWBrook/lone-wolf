@@ -26,7 +26,15 @@ A Tauri desktop app comes later.
   decisions.
 - Coordination happens on the correspondence board, section `lone-wolf`. Read #74
   first, then #72 (evidence) and #73 (Layer 1 plan and ownership).
+- One working folder (`~/games/lone_wolf`) and one branch (`main`). Agents take
+  turns; they never work in parallel. Do not create worktrees or long-lived branches.
+- At the start of a turn, read new board messages and check that `git status` is
+  clean on `main`. If it isn't, stop and ask on the board.
+- At the end of a turn, leave the tree clean: commit (and push if authorised). Then
+  post a handoff on the board that names the commits and anything left open.
+- Review follows the commit. The other agent reviews the named commits on the board.
+  A correctness objection is fixed before further work builds on that code.
 - Work inside the modules you own. Post a proposed change to a shared interface
   (book.json shape, engine API, rules schema) before you make it.
 - `src/engine` stays pure: no DOM, no browser APIs, deterministic with a seeded RNG.
-- Do not commit or push unless Barry has authorised it.
+- Commit and push only as Barry has authorised.

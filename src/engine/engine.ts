@@ -50,6 +50,7 @@ export function newGame(seed: number): GameState {
     },
     section: null,
     visited: [],
+    fatigue: 0,
   };
 }
 
@@ -197,7 +198,7 @@ export function apply(book: EngineBook, state: GameState, action: Action): { sta
       break;
     }
     case 'drop':
-      lose(book, c, ev, action.item);
+      lose(book, s, ev, action.item);
       break;
     case 'use': {
       const def = book.items[action.item];
@@ -329,9 +330,9 @@ function fightRound(book: EngineBook, s: GameState, ev: GameEvent[], evading: bo
 
 function applyAuto(book: EngineBook, s: GameState, ev: GameEvent[], e: AutoEffect): void {
   if (e.when && !holds(book, s, e.when)) return;
-  if (e.op === 'endurance') changeEndurance(book, s, ev, e.delta, 'effect');
+  if (e.op === 'endurance') changeEndurance(book, s, ev, e.delta, 'effect', e.fatigue === true);
   else if (e.op === 'gold') changeGold(s.character, ev, e.delta);
-  else for (const item of e.items) if (carried(s.character).includes(item)) lose(book, s.character, ev, item);
+  else for (const item of e.items) if (carried(s.character).includes(item)) lose(book, s, ev, item);
 }
 
 function eat(book: EngineBook, s: GameState, ev: GameEvent[], huntingFeeds: boolean): void {
@@ -359,11 +360,19 @@ function changeEndurance(
   ev: GameEvent[],
   delta: number,
   cause: 'effect' | 'healing' | 'hunger' | 'item' | 'combat',
+  fatigue = false,
 ): void {
   const c = s.character;
+  const max = maxEndurance(book, c);
   const before = c.endurance;
-  c.endurance = Math.max(0, Math.min(maxEndurance(book, c), c.endurance + delta));
-  if (c.endurance !== before) ev.push({ type: 'endurance', delta: c.endurance - before, endurance: c.endurance, cause });
+  // Healing restores wounds only: it stops short of losses from hunger or fatigue.
+  const ceiling = cause === 'healing' ? max - s.fatigue : max;
+  c.endurance = Math.max(0, Math.min(ceiling, c.endurance + delta));
+  const change = c.endurance - before;
+  if (change < 0 && (cause === 'hunger' || fatigue)) s.fatigue -= change;
+  if (change > 0 && cause !== 'healing') s.fatigue = Math.max(0, s.fatigue - change);
+  s.fatigue = Math.min(s.fatigue, max - c.endurance);
+  if (change !== 0) ev.push({ type: 'endurance', delta: change, endurance: c.endurance, cause });
   if (c.endurance === 0) die(s, ev);
 }
 
@@ -384,7 +393,8 @@ function gain(book: EngineBook, c: Character, ev: GameEvent[], item: ItemId): vo
   ev.push({ type: 'itemGained', item });
 }
 
-function lose(book: EngineBook, c: Character, ev: GameEvent[], item: ItemId): void {
+function lose(book: EngineBook, s: GameState, ev: GameEvent[], item: ItemId): void {
+  const c = s.character;
   for (const list of [c.weapons, c.backpack, c.specialItems]) {
     const i = list.indexOf(item);
     if (i >= 0) {
@@ -393,6 +403,7 @@ function lose(book: EngineBook, c: Character, ev: GameEvent[], item: ItemId): vo
     }
   }
   c.endurance = Math.min(c.endurance, maxEndurance(book, c));
+  s.fatigue = Math.min(s.fatigue, maxEndurance(book, c) - c.endurance);
   ev.push({ type: 'itemLost', item });
 }
 

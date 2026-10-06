@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { apply, availableActions, availableChoices, maxEndurance, startAt, type Action, type GameState } from '../../src/engine';
-import { book, character } from './fixture';
+import {
+  apply,
+  availableActions,
+  availableChoices,
+  buildEngineBook,
+  maxEndurance,
+  startAt,
+  type Action,
+  type GameState,
+} from '../../src/engine';
+import { book, character, imported, rules } from './fixture';
 
 const act = (s: GameState, a: Action) => apply(book, s, a);
 const at = (section: number, overrides: Parameters<typeof character>[0] = {}, seed = 1) =>
@@ -68,6 +77,44 @@ describe('healing', () => {
     expect(leave({ endurance: 20 })).toBe(21);
     expect(leave({ endurance: 25 })).toBe(25);
     expect(leave({ endurance: 20, disciplines: [] })).toBe(20);
+  });
+});
+
+// Readers' Handbook ruling adopted by Barry: Healing restores wounds, not losses
+// from hunger or fatigue.
+describe('healing after hunger and fatigue', () => {
+  const healer = { disciplines: ['healing' as const] };
+  const leave = (s: GameState) => act(s, { type: 'choose', ordinal: 1 }).state;
+
+  it('does not restore ENDURANCE lost to hunger', () => {
+    const s = at(3, { ...healer, backpack: [] });
+    expect(s.character.endurance).toBe(22);
+    expect(s.fatigue).toBe(3);
+    expect(leave(s).character.endurance).toBe(22);
+  });
+
+  it('restores wounds even while some loss is from hunger', () => {
+    const s = at(3, { ...healer, backpack: [], endurance: 20 });
+    expect(s.character.endurance).toBe(17);
+    expect(leave(s).character.endurance).toBe(18);
+  });
+
+  it('does not restore losses the rules mark as fatigue', () => {
+    const r = JSON.parse(JSON.stringify(rules));
+    r.sections['6'].effects[0].fatigue = true;
+    const tired = buildEngineBook(imported, r);
+    const s = startAt(tired, 1, character(healer), 6);
+    expect(s.character.endurance).toBe(23);
+    expect(apply(tired, s, { type: 'choose', ordinal: 1 }).state.character.endurance).toBe(23);
+    expect(leave(at(6, healer)).character.endurance).toBe(24);
+  });
+
+  it('lets other restoratives clear hunger first, so Healing can mend what remains', () => {
+    let s = at(3, { ...healer, backpack: ['potion'], endurance: 20 });
+    expect([s.character.endurance, s.fatigue]).toEqual([17, 3]);
+    s = act(s, { type: 'use', item: 'potion' }).state;
+    expect([s.character.endurance, s.fatigue]).toEqual([21, 0]);
+    expect(leave(s).character.endurance).toBe(22);
   });
 });
 

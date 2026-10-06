@@ -217,7 +217,7 @@ function chart(v: View, can: (a: Action) => boolean) {
       h('dt', {}, 'COMBAT SKILL'),
       h('dd', {}, String(c.combatSkill)),
       h('dt', {}, 'ENDURANCE'),
-      h('dd', {}, `${c.endurance} / ${maxEndurance(v.book.engine, c)}`),
+      h('dd', {}, `${c.endurance} / ${maxEndurance(v.book.engine, c)}`, v.state.fatigue > 0 && h('small', {}, ` (${v.state.fatigue} from hunger or fatigue)`)),
       h('dt', {}, 'Gold Crowns'),
       h('dd', {}, `${c.gold} / 50`),
     ),

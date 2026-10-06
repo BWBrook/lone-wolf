@@ -73,7 +73,9 @@ describe('saves', () => {
 describe('random play', () => {
   it('never breaks the carrying, gold or ENDURANCE limits', () => {
     for (let seed = 0; seed < 200; seed++) {
-      for (const { character: c, phase } of play(seed).states) {
+      for (const { character: c, phase, fatigue } of play(seed).states) {
+        expect(fatigue).toBeGreaterThanOrEqual(0);
+        expect(fatigue).toBeLessThanOrEqual(maxEndurance(book, c) - c.endurance);
         expect(c.weapons.length).toBeLessThanOrEqual(2);
         expect(c.backpack.length).toBeLessThanOrEqual(8);
         expect(c.gold).toBeGreaterThanOrEqual(0);

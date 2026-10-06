@@ -69,7 +69,13 @@ export const Condition: z.ZodType<Condition> = z.lazy(() =>
 
 const when = { when: Condition.optional() };
 
-const EnduranceEffect = z.strictObject({ op: z.literal('endurance'), delta: int, ...when });
+// fatigue: true marks a loss from exhaustion or exposure, which Healing cannot restore.
+const EnduranceEffect = z.strictObject({
+  op: z.literal('endurance'),
+  delta: int,
+  fatigue: z.literal(true).optional(),
+  ...when,
+});
 const GoldEffect = z.strictObject({ op: z.literal('gold'), delta: int, ...when });
 const LoseEffect = z.strictObject({ op: z.literal('lose'), items: z.array(ItemId).min(1), ...when });
 

@@ -75,6 +75,9 @@ export interface GameState {
   character: Character;
   section: SectionState | null;
   visited: number[];
+  // ENDURANCE lost to hunger or fatigue and not yet restored; Healing cannot
+  // restore it (Project Aon Readers' Handbook ruling, adopted by Barry).
+  fatigue: number;
 }
 
 export type Action =

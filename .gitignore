@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# Project Aon book content stays local (see AGENTS.md)
+content/
+*.zip
+*.epub
+*.mobi
+*.pdf
+*.svgz

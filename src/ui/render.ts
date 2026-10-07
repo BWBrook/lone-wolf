@@ -50,7 +50,16 @@ export function render(root: HTMLElement, v: View): void {
   const can = (a: Action) => actions.has(key(a));
   const button = (label: string, a: Action, cls = '') =>
     h('button', { class: cls, disabled: !can(a), onclick: () => v.act(a) }, label);
-  root.replaceChildren(header(v), h('main', {}, story(v, can, button), chart(v, can)));
+  root.replaceChildren(header(v));
+  if (v.book.notice) root.append(h('p', { class: 'notice' }, v.book.notice));
+  root.append(h('main', {}, story(v, can, button), chart(v, can)));
+}
+
+export function renderNotice(root: HTMLElement, title: string, heading: string, message: string): void {
+  root.replaceChildren(
+    h('header', {}, h('h1', {}, title)),
+    h('main', {}, h('section', { class: 'story' }, h('h2', {}, heading), h('p', {}, message))),
+  );
 }
 
 // Shown when the stored save cannot be restored. Nothing is overwritten until
@@ -144,6 +153,7 @@ function story(v: View, can: (a: Action) => boolean, button: Button) {
   const body: Child[] = [
     h('h2', {}, `Section ${n}`),
     text?.paragraphs.map((p) => h('p', {}, p)) ?? h('p', { class: 'missing' }, 'No text for this section.'),
+    text?.notes?.map((n) => h('p', { class: 'note' }, n)),
     log,
   ];
   if (state.phase === 'dead') {

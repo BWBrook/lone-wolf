@@ -19,7 +19,15 @@ export function buildEngineBook(
   const sections: Record<number, EngineSection> = Object.create(null);
   for (const s of imported.sections) {
     if (has(sections, s.number)) problems.push(`section ${s.number} appears twice`);
-    sections[s.number] = { ...s, rules: has(rules.sections, String(s.number)) ? rules.sections[String(s.number)]! : {} };
+    // Copy only structural fields: a caller may pass the importer's Book, and the
+    // engine must hold no prose.
+    sections[s.number] = {
+      number: s.number,
+      choices: s.choices.map(({ ordinal, target }) => ({ ordinal, target })),
+      combats: s.combats.map(({ combatSkill, endurance }) => ({ combatSkill, endurance })),
+      deadEnd: s.deadEnd,
+      rules: has(rules.sections, String(s.number)) ? rules.sections[String(s.number)]! : {},
+    };
   }
   for (const s of imported.sections) {
     const ordinals = s.choices.map((ch) => ch.ordinal);

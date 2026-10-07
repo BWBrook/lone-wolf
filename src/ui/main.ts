@@ -11,17 +11,37 @@ import {
   type GameState,
   type SaveGame,
 } from '../engine';
+import type { Book } from '../importer/book';
+import { playableBook, readerBook } from './adapter';
+import type { PlayableBook } from './content';
 import { demoBook } from './demo';
-import { render, renderRecovery } from './render';
+import { render, renderNotice, renderRecovery } from './render';
 
-const book = demoBook;
 const root = document.getElementById('app')!;
-const storageKey = `lone-wolf:save:${book.engine.id}`;
+const params = new URLSearchParams(location.search);
+const reader = params.has('reader');
+// Only the agreed rules file; sample encodings are never loaded by the player.
+const rulesFiles = import.meta.glob<unknown>('../../data/mechanics/01fftd.json', { import: 'default' });
 
+let book: PlayableBook;
+let storageKey: string;
 let save: SaveGame;
 let state: GameState;
 let events: GameEvent[] = [];
 let shownSection: number | null = null;
+
+async function loadBook(): Promise<PlayableBook> {
+  if (params.get('book') !== '01fftd') return demoBook;
+  const response = await fetch('/content/01fftd/book.json');
+  if (!response.ok) {
+    throw new Error('Import your Project Aon download first: npm run import -- /path/to/01fftd.zip');
+  }
+  const imported = (await response.json()) as Book;
+  const loadRules = rulesFiles['../../data/mechanics/01fftd.json'];
+  if (loadRules) return playableBook(imported, await loadRules());
+  if (reader) return readerBook(imported);
+  throw new Error('The rules for this book are not encoded yet. Add &reader to the address to read the text without rules.');
+}
 
 function start(seed = crypto.getRandomValues(new Uint32Array(1))[0]!) {
   save = newSave(book.engine, seed);
@@ -97,10 +117,19 @@ function stored(): string | null {
   }
 }
 
-const raw = stored();
-if (raw === null) {
-  start();
-} else {
+async function main() {
+  try {
+    book = await loadBook();
+  } catch (err) {
+    renderNotice(root, 'Lone Wolf', 'This book cannot be opened yet', (err as Error).message);
+    return;
+  }
+  storageKey = `lone-wolf:save:${book.engine.id}${book.notice ? ':reader' : ''}`;
+  const raw = stored();
+  if (raw === null) {
+    start();
+    return;
+  }
   try {
     restore(JSON.parse(raw));
   } catch (err) {
@@ -112,3 +141,5 @@ if (raw === null) {
     });
   }
 }
+
+void main();

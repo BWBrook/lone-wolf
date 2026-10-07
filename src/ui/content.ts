@@ -4,12 +4,14 @@ import type { EngineBook } from '../engine';
 // this comes from the local importer output; it is never committed.
 export interface SectionText {
   paragraphs: string[];
+  notes?: string[];
   choices: Record<number, string>;
   enemies: string[];
 }
 
 export interface PlayableBook {
   title: string;
+  notice?: string;
   engine: EngineBook;
   text: Record<number, SectionText>;
 }

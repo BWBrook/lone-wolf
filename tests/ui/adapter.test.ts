@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { apply, availableActions, newGame } from '../../src/engine';
+import { apply, availableActions, exportCharacter, newGame } from '../../src/engine';
 import { parseBook } from '../../src/importer/parse';
-import { playableBook, readerBook } from '../../src/ui/adapter';
+import { playableBook, readerBook, selectBook } from '../../src/ui/adapter';
 import { choice, html, source } from '../importer/fixture';
 
 // Synthetic importer output: 350 invented sections, one with a fight and a footnote.
@@ -44,13 +44,31 @@ describe('player adapter', () => {
     expect(() => playableBook(book, rules)).toThrow(/sections without rules/);
   });
 
-  it('lets reader mode walk the text to the final section', () => {
+  it('lets reader mode walk the text to the final section, but not export a completed character', () => {
+    const engine = readerBook(book).engine;
     let s = newGame(1);
-    for (let i = 0; i < 2000 && availableActions(readerBook(book).engine, s).length; i++) {
-      const engine = readerBook(book).engine;
+    for (let i = 0; i < 2000 && availableActions(engine, s).length; i++) {
       const actions = availableActions(engine, s);
       s = apply(engine, s, actions.find((a) => a.type === 'choose') ?? actions[0]!).state;
     }
     expect(s.phase).toBe('won');
+    expect(() => exportCharacter(engine, s)).toThrow(/without rules/);
+  });
+
+  it('honours an explicit reader request even when rules exist', () => {
+    const rules = {
+      book: '01fftd',
+      finalSection: 350,
+      items: {},
+      setup: { disciplines: 5, items: [], goldBase: 0, randomItem: Object.fromEntries(Array.from({ length: 10 }, (_, i) => [String(i), {}])) },
+      sections: Object.fromEntries(Array.from({ length: 350 }, (_, i) => [String(i + 1), {}])),
+    };
+    const reading = selectBook(book, rules, true);
+    expect(reading.notice).toMatch(/Reader mode/);
+    expect(reading.engine.unreviewed).toHaveLength(350);
+    const playing = selectBook(book, rules, false);
+    expect(playing.notice).toBeUndefined();
+    expect(playing.engine.unreviewed).toEqual([]);
+    expect(() => selectBook(book, null, false)).toThrow(/not encoded yet/);
   });
 });

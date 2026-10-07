@@ -12,7 +12,7 @@ import {
   type SaveGame,
 } from '../engine';
 import type { Book } from '../importer/book';
-import { playableBook, readerBook } from './adapter';
+import { selectBook } from './adapter';
 import type { PlayableBook } from './content';
 import { demoBook } from './demo';
 import { render, renderNotice, renderRecovery } from './render';
@@ -38,9 +38,7 @@ async function loadBook(): Promise<PlayableBook> {
   }
   const imported = (await response.json()) as Book;
   const loadRules = rulesFiles['../../data/mechanics/01fftd.json'];
-  if (loadRules) return playableBook(imported, await loadRules());
-  if (reader) return readerBook(imported);
-  throw new Error('The rules for this book are not encoded yet. Add &reader to the address to read the text without rules.');
+  return selectBook(imported, !reader && loadRules ? await loadRules() : null, reader);
 }
 
 function start(seed = crypto.getRandomValues(new Uint32Array(1))[0]!) {
@@ -101,8 +99,13 @@ function draw() {
         alert(`That save could not be loaded: ${(err as Error).message}`);
       }
     },
-    exportCharacter: () =>
-      download(`${book.engine.id}-character.json`, JSON.stringify(exportCharacter(book.engine, state), null, 2)),
+    exportCharacter: () => {
+      try {
+        download(`${book.engine.id}-character.json`, JSON.stringify(exportCharacter(book.engine, state), null, 2));
+      } catch (err) {
+        alert((err as Error).message);
+      }
+    },
   });
   const section = state.section?.number ?? null;
   if (section !== shownSection) window.scrollTo({ top: 0 });

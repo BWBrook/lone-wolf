@@ -18,6 +18,14 @@ export function playableBook(book: Book, rules: unknown, options: { allowUnrevie
   return { title: book.title, engine: buildEngineBook(book, rules, options), text };
 }
 
+// An explicit reader request wins over available rules; without rules there is no
+// playable book.
+export function selectBook(imported: Book, rules: unknown | null, reader: boolean): PlayableBook {
+  if (reader) return readerBook(imported);
+  if (rules !== null) return playableBook(imported, rules);
+  throw new Error('The rules for this book are not encoded yet. Add &reader to the address to read the text without rules.');
+}
+
 // Development only: browse an imported book's text before its rules exist. No
 // section rules apply, so combats, items and meals are skipped; the starting kit
 // is a placeholder rather than the book's.

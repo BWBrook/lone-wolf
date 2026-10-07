@@ -489,6 +489,8 @@ function sameAction(a: Action, b: Action): boolean {
 
 export function exportCharacter(book: EngineBook, s: GameState): CharacterRecord {
   if (s.phase !== 'won') throw new Error('only a character who completed the book can be exported');
+  // Completion counts only under complete rules: not in reader or partial development books.
+  if (book.unreviewed.length) throw new Error('this book has sections without rules, so completion cannot be exported');
   const { combatSkill, baseEndurance, disciplines, weaponskill, weapons, backpack, specialItems, gold } = s.character;
   return {
     version: 1,

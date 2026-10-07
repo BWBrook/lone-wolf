@@ -160,7 +160,13 @@ function story(v: View, can: (a: Action) => boolean, button: Button) {
     return h('section', { class: 'story' }, body, h('p', { class: 'ending' }, 'Your adventure is over.'), h('button', { class: 'primary', onclick: v.newGame }, 'Start again'));
   }
   if (state.phase === 'won') {
-    return h('section', { class: 'story' }, body, h('p', { class: 'ending' }, 'You have completed this adventure.'), h('button', { class: 'primary', onclick: v.exportCharacter }, 'Export character'));
+    return h(
+      'section',
+      { class: 'story' },
+      body,
+      h('p', { class: 'ending' }, 'You have completed this adventure.'),
+      !book.engine.unreviewed.length && h('button', { class: 'primary', onclick: v.exportCharacter }, 'Export character'),
+    );
   }
 
   const pending = state.section!.pending!;

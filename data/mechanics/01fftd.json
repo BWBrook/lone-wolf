@@ -73,6 +73,9 @@
     },
     "crystalStarPendant": {
       "slot": "special"
+    },
+    "scroll": {
+      "slot": "backpack"
     }
   },
   "setup": {
@@ -525,6 +528,10 @@
       ],
       "note": "Barry's ruling (7 Oct 2026, #73 1116): the ordeal is not a wound, so Healing cannot restore it. No Mindshield exception."
     },
+    "176": {},
+    "177": {},
+    "178": {},
+    "179": {},
     "180": {
       "effects": [
         {
@@ -553,6 +560,11 @@
         }
       ]
     },
+    "181": {
+      "note": "No numeric ENDURANCE loss is specified here; none is invented."
+    },
+    "182": {},
+    "183": {},
     "184": {
       "effects": [
         {
@@ -571,6 +583,9 @@
         }
       ]
     },
+    "185": {},
+    "186": {},
+    "187": {},
     "188": {
       "effects": [
         {
@@ -597,6 +612,68 @@
         }
       ]
     },
+    "189": {},
+    "190": {},
+    "191": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "evade": {
+            "afterRounds": 0,
+            "choice": 2
+          }
+        }
+      ]
+    },
+    "192": {},
+    "193": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "scroll"
+          ]
+        }
+      ],
+      "note": "scroll uses the default Backpack slot from the front-matter carrying rule; this section does not designate a Special Item."
+    },
+    "194": {},
+    "195": {},
+    "196": {},
+    "197": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "shortSword"
+          ],
+          "gold": 6
+        }
+      ]
+    },
+    "198": {},
+    "199": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "meal"
+          ]
+        }
+      ]
+    },
+    "200": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "camouflage"
+          }
+        }
+      }
+    },
+    "201": {},
+    "202": {},
     "203": {
       "effects": [
         {
@@ -621,6 +698,7 @@
         }
       }
     },
+    "204": {},
     "205": {
       "effects": [
         {
@@ -654,12 +732,100 @@
       },
       "note": "Weapons and Backpack Items are lost; the Backpack itself is kept."
     },
+    "206": {},
+    "207": {},
+    "208": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0
+        }
+      ]
+    },
+    "209": {},
+    "210": {},
+    "211": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        }
+      }
+    },
     "212": {
       "effects": [
         {
           "op": "restoreEndurance"
         }
       ]
+    },
+    "213": {},
+    "214": {
+      "effects": [
+        {
+          "op": "hook",
+          "name": "returnTo125South"
+        }
+      ],
+      "note": "Requires 214 -> 125 -> 27, allowing only ordinal 2 on that immediate arrival at 125. Pending arrival-condition extension and the 125 encoding; see board #73, 1173. This is unsupported, not an empty reviewed rule."
+    },
+    "215": {},
+    "216": {
+      "note": "Healing is used on another character; no numeric cost or restoration for the player is specified."
+    },
+    "217": {},
+    "218": {},
+    "219": {},
+    "220": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "evade": {
+            "afterRounds": 0,
+            "choice": 2
+          }
+        }
+      ]
+    },
+    "221": {},
+    "222": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "tracking"
+          }
+        }
+      }
+    },
+    "223": {},
+    "224": {},
+    "225": {},
+    "226": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      }
     },
     "227": {
       "effects": [
@@ -673,6 +839,24 @@
       ],
       "note": "The first round in which Lone Wolf loses ENDURANCE ends the fight and leads to 271, a death, so the timing changes only the trace (#73, 1116)."
     },
+    "228": {
+      "note": "The weapon appears in the route description, without an explicit possession test; no item gate is added."
+    },
+    "229": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "modifiers": [
+            {
+              "combatSkill": -1
+            }
+          ]
+        }
+      ],
+      "note": "The COMBAT SKILL penalty applies to this fight; base COMBAT SKILL is unchanged."
+    },
+    "230": {},
     "231": {
       "effects": [
         {
@@ -689,6 +873,8 @@
         }
       ]
     },
+    "232": {},
+    "233": {},
     "236": {
       "effects": [
         {

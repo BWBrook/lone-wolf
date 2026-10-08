@@ -1,0 +1,857 @@
+{
+  "book": "01fftd",
+  "finalSection": 350,
+  "items": {
+    "axe": {
+      "slot": "weapon",
+      "weapon": "axe"
+    },
+    "sword": {
+      "slot": "weapon",
+      "weapon": "sword"
+    },
+    "mace": {
+      "slot": "weapon",
+      "weapon": "mace"
+    },
+    "quarterstaff": {
+      "slot": "weapon",
+      "weapon": "quarterstaff"
+    },
+    "spear": {
+      "slot": "weapon",
+      "weapon": "spear"
+    },
+    "broadsword": {
+      "slot": "weapon",
+      "weapon": "broadsword"
+    },
+    "shortSword": {
+      "slot": "weapon",
+      "weapon": "shortSword"
+    },
+    "meal": {
+      "slot": "backpack",
+      "meal": true
+    },
+    "healingPotion": {
+      "slot": "backpack",
+      "use": {
+        "endurance": 4,
+        "notBeforeCombat": true
+      }
+    },
+    "laumspur": {
+      "slot": "backpack",
+      "meal": true,
+      "use": {
+        "endurance": 3
+      }
+    },
+    "vordakGem": {
+      "slot": "backpack"
+    },
+    "goldenKey": {
+      "slot": "backpack"
+    },
+    "tinderbox": {
+      "slot": "backpack"
+    },
+    "torch": {
+      "slot": "backpack"
+    },
+    "helmet": {
+      "slot": "special",
+      "endurance": 2
+    },
+    "chainmailWaistcoat": {
+      "slot": "special",
+      "endurance": 4
+    },
+    "mapOfSommerlund": {
+      "slot": "special"
+    },
+    "crystalStarPendant": {
+      "slot": "special"
+    }
+  },
+  "setup": {
+    "disciplines": 5,
+    "items": [
+      "axe",
+      "meal",
+      "mapOfSommerlund"
+    ],
+    "goldBase": 0,
+    "randomItem": {
+      "0": {
+        "items": [
+          "broadsword"
+        ]
+      },
+      "1": {
+        "items": [
+          "sword"
+        ]
+      },
+      "2": {
+        "items": [
+          "helmet"
+        ]
+      },
+      "3": {
+        "items": [
+          "meal",
+          "meal"
+        ]
+      },
+      "4": {
+        "items": [
+          "chainmailWaistcoat"
+        ]
+      },
+      "5": {
+        "items": [
+          "mace"
+        ]
+      },
+      "6": {
+        "items": [
+          "healingPotion"
+        ]
+      },
+      "7": {
+        "items": [
+          "quarterstaff"
+        ]
+      },
+      "8": {
+        "items": [
+          "spear"
+        ]
+      },
+      "9": {
+        "gold": 12
+      }
+    }
+  },
+  "sections": {
+    "1": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        }
+      }
+    },
+    "9": {
+      "choices": {
+        "1": {
+          "when": {
+            "item": "vordakGem"
+          }
+        },
+        "2": {
+          "when": {
+            "not": {
+              "item": "vordakGem"
+            }
+          }
+        }
+      }
+    },
+    "12": {
+      "choices": {
+        "1": {
+          "when": {
+            "gold": {
+              "min": 10
+            }
+          },
+          "effects": [
+            {
+              "op": "gold",
+              "delta": -10
+            }
+          ]
+        }
+      }
+    },
+    "15": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "sword"
+          ]
+        }
+      ]
+    },
+    "17": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "modifiers": [
+            {
+              "combatSkill": -1
+            }
+          ]
+        },
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 0
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 1,
+              "max": 2
+            }
+          }
+        },
+        "3": {
+          "when": {
+            "random": {
+              "min": 3,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "21": {
+      "effects": [
+        {
+          "op": "random"
+        },
+        {
+          "op": "random",
+          "when": {
+            "random": {
+              "draw": 1,
+              "max": 4
+            }
+          }
+        },
+        {
+          "op": "random",
+          "when": {
+            "all": [
+              {
+                "random": {
+                  "draw": 1,
+                  "max": 4
+                }
+              },
+              {
+                "random": {
+                  "draw": 2,
+                  "max": 7
+                }
+              }
+            ]
+          }
+        },
+        {
+          "op": "die",
+          "when": {
+            "all": [
+              {
+                "random": {
+                  "draw": 1,
+                  "max": 4
+                }
+              },
+              {
+                "random": {
+                  "draw": 2,
+                  "max": 7
+                }
+              },
+              {
+                "random": {
+                  "draw": 3,
+                  "max": 8
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "draw": 1,
+              "min": 5,
+              "max": 9
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "all": [
+              {
+                "random": {
+                  "draw": 1,
+                  "max": 4
+                }
+              },
+              {
+                "random": {
+                  "draw": 2,
+                  "min": 8,
+                  "max": 9
+                }
+              }
+            ]
+          }
+        },
+        "3": {
+          "when": {
+            "random": {
+              "draw": 3,
+              "min": 9,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "23": {
+      "choices": {
+        "1": {
+          "when": {
+            "item": "goldenKey"
+          }
+        },
+        "2": {
+          "when": {
+            "discipline": "mindOverMatter"
+          }
+        }
+      }
+    },
+    "29": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "modifiers": [
+            {
+              "combatSkill": -2,
+              "when": {
+                "not": {
+                  "discipline": "mindshield"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "note": "The text gives a Mindshield-dependent penalty but no Mindblast immunity, so none is encoded."
+    },
+    "36": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          },
+          "effects": [
+            {
+              "op": "endurance",
+              "delta": -2
+            }
+          ]
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      },
+      "note": "The fall is treated as a wound, so Healing can restore it."
+    },
+    "37": {
+      "effects": [
+        {
+          "op": "meal"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "camouflage"
+          }
+        }
+      }
+    },
+    "112": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0
+        },
+        {
+          "op": "combat",
+          "combat": 1
+        }
+      ]
+    },
+    "113": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "laumspur",
+            "laumspur"
+          ]
+        }
+      ],
+      "note": "Footnote 1: a Laumspur Meal also restores 3 ENDURANCE, the player chooses which Meal to eat, and the herb may be used at any time, including between combat rounds (#73, 1119 and 1168)."
+    },
+    "136": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "modifiers": [
+            {
+              "combatSkill": 1
+            }
+          ]
+        },
+        {
+          "op": "combat",
+          "combat": 1,
+          "modifiers": [
+            {
+              "combatSkill": 1
+            }
+          ]
+        }
+      ]
+    },
+    "138": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0
+        },
+        {
+          "op": "combat",
+          "combat": 1
+        }
+      ]
+    },
+    "144": {
+      "effects": [
+        {
+          "op": "stealOne",
+          "from": "backpack",
+          "fallback": "weapon"
+        },
+        {
+          "op": "endurance",
+          "delta": -2
+        }
+      ],
+      "note": "Barry's ruling (7 Oct 2026, #73 1116): the stolen item is a random carried copy, not the player's choice."
+    },
+    "147": {
+      "effects": [
+        {
+          "op": "meal"
+        }
+      ],
+      "note": "Footnote 2 swaps which wording goes with which destination on first arrival from 42; both destinations are always offered, so this is presentation, not a rule (#73, 1116 and 1118)."
+    },
+    "162": {
+      "effects": [
+        {
+          "op": "loseAll",
+          "slots": [
+            "weapon"
+          ]
+        },
+        {
+          "op": "loseBackpack"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "mindOverMatter"
+          }
+        },
+        "2": {
+          "when": {
+            "not": {
+              "discipline": "mindOverMatter"
+            }
+          }
+        }
+      }
+    },
+    "166": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -4,
+          "fatigue": true
+        }
+      ],
+      "note": "Barry's ruling (7 Oct 2026, #73 1116): the ordeal is not a wound, so Healing cannot restore it. No Mindshield exception."
+    },
+    "180": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "evade": {
+            "afterRounds": 0,
+            "choice": 2
+          }
+        },
+        {
+          "op": "combat",
+          "combat": 1,
+          "evade": {
+            "afterRounds": 0,
+            "choice": 2
+          }
+        },
+        {
+          "op": "combat",
+          "combat": 2,
+          "evade": {
+            "afterRounds": 0,
+            "choice": 2
+          }
+        }
+      ]
+    },
+    "184": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "sword",
+            "meal",
+            "meal",
+            "meal",
+            "meal"
+          ],
+          "gold": 40
+        },
+        {
+          "op": "meal"
+        }
+      ]
+    },
+    "188": {
+      "effects": [
+        {
+          "op": "random"
+        },
+        {
+          "op": "loseBackpack",
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 6
+            }
+          }
+        },
+        {
+          "op": "endurance",
+          "delta": -3,
+          "when": {
+            "random": {
+              "min": 7,
+              "max": 9
+            }
+          }
+        }
+      ]
+    },
+    "203": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -10
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "endurance": {
+              "min": 10
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "endurance": {
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "205": {
+      "effects": [
+        {
+          "op": "loseAll",
+          "slots": [
+            "weapon",
+            "backpack"
+          ]
+        },
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      },
+      "note": "Weapons and Backpack Items are lost; the Backpack itself is kept."
+    },
+    "212": {
+      "effects": [
+        {
+          "op": "restoreEndurance"
+        }
+      ]
+    },
+    "227": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "onHeroLoss": {
+            "choice": 1
+          }
+        }
+      ],
+      "note": "The first round in which Lone Wolf loses ENDURANCE ends the fight and leads to 271, a death, so the timing changes only the trace (#73, 1116)."
+    },
+    "231": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "maxRounds": 4,
+          "timeout": {
+            "choice": 2
+          },
+          "evade": {
+            "afterRounds": 2,
+            "choice": 3
+          }
+        }
+      ]
+    },
+    "236": {
+      "effects": [
+        {
+          "op": "lose",
+          "items": [
+            "vordakGem"
+          ]
+        },
+        {
+          "op": "endurance",
+          "delta": -6
+        },
+        {
+          "op": "combatSkill",
+          "delta": -1
+        }
+      ],
+      "note": "Only one Gem is lost, before the damage (#73, 1115 and 1116)."
+    },
+    "253": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0
+        },
+        {
+          "op": "combat",
+          "combat": 1
+        },
+        {
+          "op": "combat",
+          "combat": 2
+        },
+        {
+          "op": "combat",
+          "combat": 3
+        }
+      ]
+    },
+    "255": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "sword"
+          ]
+        },
+        {
+          "op": "combat",
+          "combat": 0,
+          "mindblastImmune": true
+        }
+      ],
+      "note": "The Prince's Sword is treated as an ordinary Sword."
+    },
+    "260": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "unarmed": true
+        },
+        {
+          "op": "combat",
+          "combat": 1,
+          "unarmed": true
+        }
+      ]
+    },
+    "263": {
+      "effects": [
+        {
+          "op": "pickup",
+          "gold": 3
+        }
+      ]
+    },
+    "294": {
+      "effects": [
+        {
+          "op": "loseAll",
+          "slots": [
+            "weapon"
+          ]
+        },
+        {
+          "op": "loseBackpack"
+        },
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 2
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 3,
+              "max": 6
+            }
+          }
+        },
+        "3": {
+          "when": {
+            "random": {
+              "min": 7,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "306": {},
+    "336": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0
+        },
+        {
+          "op": "combat",
+          "combat": 1
+        }
+      ]
+    },
+    "347": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "shortSword",
+            "tinderbox",
+            "torch",
+            "torch",
+            "torch",
+            "torch",
+            "torch",
+            "torch",
+            "torch",
+            "torch"
+          ]
+        }
+      ],
+      "note": "Footnote 3: any number of Torches, one Backpack slot each, so eight are offered (the Backpack limit)."
+    },
+    "349": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "crystalStarPendant"
+          ]
+        }
+      ],
+      "note": "A Special Item, as the Readers' Handbook lists it; footnote 4 makes keeping it optional (#73, 1115 and 1116)."
+    },
+    "350": {}
+  }
+}

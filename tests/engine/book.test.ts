@@ -20,7 +20,7 @@ describe('buildEngineBook', () => {
   it('refuses unreviewed sections unless deliberately allowed', () => {
     const r = clone(rules) as any;
     delete r.sections['6'];
-    expect(() => buildEngineBook(imported, r)).toThrow(/sections without rules: 6/);
+    expect(() => buildEngineBook(imported, r)).toThrow(/1 sections without rules: 6$/);
     expect(buildEngineBook(imported, r, { allowUnreviewed: true }).unreviewed).toEqual([6]);
   });
 

@@ -85,7 +85,10 @@ export function buildEngineBook(
   Object.values(rules.setup.randomItem).forEach((r) => r.items?.forEach((id) => item('setup', id)));
 
   const unreviewed = imported.sections.map((s) => s.number).filter((n) => !has(rules.sections, String(n)));
-  if (unreviewed.length && !allowUnreviewed) problems.push(`sections without rules: ${unreviewed.join(', ')}`);
+  if (unreviewed.length && !allowUnreviewed) {
+    const shown = unreviewed.slice(0, 12).join(', ') + (unreviewed.length > 12 ? ', …' : '');
+    problems.push(`${unreviewed.length} sections without rules: ${shown}`);
+  }
 
   if (problems.length) throw new Error(`invalid rules for ${imported.id}:\n${problems.join('\n')}`);
   return {

@@ -47,6 +47,7 @@ export function buildEngineBook(
   const condition = (where: string, c: Condition): void => {
     if ('item' in c) item(where, c.item);
     else if ('visited' in c && !has(sections, c.visited)) problems.push(`${where}: unknown section ${c.visited}`);
+    else if ('arrivedFrom' in c && !has(sections, c.arrivedFrom)) problems.push(`${where}: unknown section ${c.arrivedFrom}`);
     else if ('not' in c) condition(where, c.not);
     else if ('all' in c) c.all.forEach((x) => condition(where, x));
     else if ('any' in c) c.any.forEach((x) => condition(where, x));

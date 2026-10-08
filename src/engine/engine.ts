@@ -99,6 +99,7 @@ export function holds(book: EngineBook, s: GameState, cond: Condition): boolean 
   }
   if ('rounds' in cond) return s.section?.rounds != null && inRange(s.section.rounds, cond.rounds);
   if ('visited' in cond) return s.visited.includes(cond.visited);
+  if ('arrivedFrom' in cond) return s.section?.from === cond.arrivedFrom;
   if ('not' in cond) return !holds(book, s, cond.not);
   if ('all' in cond) return cond.all.every((x) => holds(book, s, x));
   return cond.any.some((x) => holds(book, s, x));
@@ -540,7 +541,8 @@ function canUse(book: EngineBook, s: GameState, item: ItemId): boolean {
 }
 
 function enterSection(s: GameState, ev: GameEvent[], number: number): void {
-  s.section = { number, effect: 0, pending: null, hadCombat: false, draws: [], rounds: null };
+  const from = s.section?.number ?? null;
+  s.section = { number, from, effect: 0, pending: null, hadCombat: false, draws: [], rounds: null };
   if (!s.visited.includes(number)) {
     s.visited.push(number);
     s.visited.sort((a, b) => a - b);

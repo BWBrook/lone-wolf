@@ -14,7 +14,7 @@ import {
   type GameEvent,
   type GameState,
 } from '../../src/engine';
-import { draw10, drawBelow, seedRng } from '../../src/engine/rng';
+import { draw10, drawBelow, nextU32, seedRng, type RngState } from '../../src/engine/rng';
 
 // Synthetic book exercising the schema extensions agreed in board #73 (1117, 1119, 1168).
 const c = (ordinal: number, target: number) => ({ ordinal, target });
@@ -37,6 +37,10 @@ const imported = {
     fight(32, 15, 1000, c(1, 99)),
     fight(33, 0, 5, c(1, 99), c(2, 41), c(3, 40)),
     fight(34, 15, 30, c(1, 99), c(2, 41)),
+    plain(60, c(1, 61), c(2, 62), c(3, 63)),
+    plain(61, c(1, 99)),
+    plain(62, c(1, 99), c(2, 60)),
+    plain(63, c(1, 60)),
     plain(99),
   ],
 };
@@ -89,6 +93,13 @@ const rules = {
     '32': { effects: [{ op: 'combat', combat: 0 }] },
     '33': { effects: [{ op: 'combat', combat: 0, maxRounds: 1, timeout: { choice: 2 }, onHeroLoss: { choice: 3 } }] },
     '34': { effects: [{ op: 'combat', combat: 0, maxRounds: 4, timeout: { choice: 2 } }] },
+    // The 214 -> 125 pattern: returning from 63 allows only 60's second exit.
+    '60': {
+      choices: {
+        '1': { when: { all: [{ discipline: 'tracking' }, { not: { arrivedFrom: 63 } }] } },
+        '3': { when: { not: { arrivedFrom: 63 } } },
+      },
+    },
   },
 };
 const book = buildEngineBook(imported, rules);
@@ -213,6 +224,27 @@ describe('theft (Barry: a random carried copy)', () => {
     expect(none.rng).toEqual(seedRng(7));
   });
 
+  it('rejects values at or above the limit and accepts the one just below it', () => {
+    for (const n of [3, 7]) {
+      const limit = 0x100000000 - (0x100000000 % n);
+      for (const first of [limit, 0xffffffff]) {
+        const state: RngState = [first, 0, 0, 0];
+        const replica: RngState = [first, 0, 0, 0];
+        expect(nextU32(replica)).toBe(first);
+        const second = nextU32(replica);
+        expect(drawBelow(state, n)).toBe(second % n);
+        expect(state).toEqual(replica); // exactly two values consumed
+      }
+      const accepted: RngState = [limit - 1, 0, 0, 0];
+      expect(drawBelow(accepted, n)).toBe((limit - 1) % n);
+      expect(accepted).toEqual((() => {
+        const r: RngState = [limit - 1, 0, 0, 0];
+        nextU32(r);
+        return r;
+      })());
+    }
+  });
+
   it('draws without bias below n', () => {
     expect(() => drawBelow(seedRng(1), 0)).toThrow(RangeError);
     const r = seedRng(3);
@@ -293,6 +325,36 @@ describe('combat branches', () => {
       }
     }
     expect(outcomes).toEqual(new Set(['win', 'win on the limit round', 'death', 'timeout']));
+  });
+});
+
+describe('arrival-dependent choices (the 214 -> 125 pattern)', () => {
+  const tracker = { disciplines: ['tracking' as const] };
+  it('offers only the second exit straight after arriving from 63, even with Tracking', () => {
+    const s = act(at(63, tracker), { type: 'choose', ordinal: 1 }).state;
+    expect(s.section).toMatchObject({ number: 60, from: 63 });
+    expect(availableChoices(book, s)).toEqual([2]);
+  });
+
+  it('offers every route the text permits on any other arrival', () => {
+    expect(at(60, tracker).section!.from).toBeNull();
+    expect(availableChoices(book, at(60, tracker))).toEqual([1, 2, 3]);
+  });
+
+  it('expires on the next move, so an earlier visit to 63 does not restrict a later arrival', () => {
+    let s = act(at(63, tracker), { type: 'choose', ordinal: 1 }).state;
+    s = act(s, { type: 'choose', ordinal: 2 }).state;
+    s = act(s, { type: 'choose', ordinal: 2 }).state;
+    expect(s.section).toMatchObject({ number: 60, from: 62 });
+    expect(s.visited).toContain(63);
+    expect(availableChoices(book, s)).toEqual([1, 2, 3]);
+  });
+
+  it('survives serialisation', () => {
+    const s = act(at(63, tracker), { type: 'choose', ordinal: 1 }).state;
+    const copy = JSON.parse(JSON.stringify(s)) as GameState;
+    expect(copy.section!.from).toBe(63);
+    expect(availableChoices(book, copy)).toEqual([2]);
   });
 });
 

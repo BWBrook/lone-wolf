@@ -61,6 +61,7 @@ export type Pending =
 
 export interface SectionState {
   number: number;
+  from: number | null; // the section played immediately before; null at the start
   effect: number; // index of the effect being resolved
   pending: Pending | null;
   hadCombat: boolean;

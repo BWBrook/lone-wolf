@@ -54,6 +54,7 @@ export type Condition =
   | { random: DrawRange }
   | { rounds: Range }
   | { visited: number }
+  | { arrivedFrom: number }
   | { not: Condition }
   | { all: Condition[] }
   | { any: Condition[] };
@@ -67,6 +68,8 @@ export const Condition: z.ZodType<Condition> = z.lazy(() =>
     z.strictObject({ random: DrawRange }),
     z.strictObject({ rounds: Range }),
     z.strictObject({ visited: int.positive() }),
+    // The section played immediately before this one; null at the start of a book.
+    z.strictObject({ arrivedFrom: int.positive() }),
     z.strictObject({ not: Condition }),
     z.strictObject({ all: z.array(Condition).min(1) }),
     z.strictObject({ any: z.array(Condition).min(1) }),

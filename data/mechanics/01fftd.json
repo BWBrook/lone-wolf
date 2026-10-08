@@ -76,6 +76,10 @@
     },
     "scroll": {
       "slot": "backpack"
+    },
+    "dagger": {
+      "slot": "weapon",
+      "weapon": "dagger"
     }
   },
   "setup": {
@@ -148,6 +152,69 @@
         }
       }
     },
+    "2": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "3": {},
+    "4": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        }
+      }
+    },
+    "5": {},
+    "6": {},
+    "7": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 2
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 3,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "8": {},
     "9": {
       "choices": {
         "1": {
@@ -163,6 +230,10 @@
           }
         }
       }
+    },
+    "10": {},
+    "11": {
+      "note": "The surgeon's cloak is never an Action Chart item, so nothing is lost."
     },
     "12": {
       "choices": {
@@ -181,6 +252,8 @@
         }
       }
     },
+    "13": {},
+    "14": {},
     "15": {
       "effects": [
         {
@@ -191,6 +264,7 @@
         }
       ]
     },
+    "16": {},
     "17": {
       "effects": [
         {
@@ -232,6 +306,41 @@
           }
         }
       }
+    },
+    "18": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "camouflage"
+          }
+        }
+      }
+    },
+    "19": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "tracking"
+          }
+        }
+      }
+    },
+    "20": {
+      "effects": [
+        {
+          "op": "hook",
+          "name": "s20_backpackPickup"
+        },
+        {
+          "op": "pickup",
+          "items": [
+            "meal",
+            "meal",
+            "dagger"
+          ]
+        }
+      ],
+      "note": "Also offers a replacement Backpack: taking it restores hasBackpack, so the Meals can then be carried. Proposed: pickup {backpack: true} with a takeBackpack action (board #73)."
     },
     "21": {
       "effects": [
@@ -332,6 +441,31 @@
         }
       }
     },
+    "22": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
     "23": {
       "choices": {
         "1": {
@@ -346,6 +480,11 @@
         }
       }
     },
+    "24": {},
+    "25": {},
+    "26": {},
+    "27": {},
+    "28": {},
     "29": {
       "effects": [
         {
@@ -365,6 +504,38 @@
       ],
       "note": "The text gives a Mindshield-dependent penalty but no Mindblast immunity, so none is encoded."
     },
+    "30": {},
+    "31": {},
+    "32": {},
+    "33": {
+      "effects": [
+        {
+          "op": "gold",
+          "delta": 3
+        }
+      ],
+      "note": "The coins are pocketed, not offered, so the gain is automatic."
+    },
+    "34": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "modifiers": [
+            {
+              "combatSkill": -2,
+              "when": {
+                "not": {
+                  "discipline": "mindshield"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "note": "As at 29: a Mindshield-dependent penalty, no stated Mindblast immunity."
+    },
+    "35": {},
     "36": {
       "effects": [
         {
@@ -411,6 +582,141 @@
         }
       }
     },
+    "38": {},
+    "39": {},
+    "40": {},
+    "41": {
+      "note": "The arrows are narrated without a stated ENDURANCE loss, so none is applied."
+    },
+    "42": {},
+    "43": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "evade": {
+            "afterRounds": 3,
+            "choice": 2
+          }
+        }
+      ],
+      "note": "Evasion opens after three rounds; the escape round is the 'chance being wounded as you flee'."
+    },
+    "44": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      },
+      "note": "The fall states no ENDURANCE loss."
+    },
+    "45": {},
+    "46": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        },
+        "2": {
+          "when": {
+            "gold": {
+              "min": 2
+            }
+          },
+          "effects": [
+            {
+              "op": "gold",
+              "delta": -2
+            }
+          ]
+        }
+      },
+      "note": "Accepting the 2-Crown offer is read as paying it; 246 never charges the fee. Fidelity reading, flagged on the board."
+    },
+    "47": {},
+    "48": {},
+    "49": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "50": {},
+    "51": {},
+    "52": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "animalKinship"
+          }
+        },
+        "2": {
+          "when": {
+            "not": {
+              "discipline": "animalKinship"
+            }
+          }
+        }
+      }
+    },
+    "53": {},
+    "54": {},
+    "55": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "modifiers": [
+            {
+              "combatSkill": 4
+            }
+          ]
+        }
+      ]
+    },
+    "56": {},
+    "57": {},
+    "58": {},
+    "59": {},
+    "60": {},
     "112": {
       "effects": [
         {
@@ -434,6 +740,32 @@
         }
       ],
       "note": "Footnote 1: a Laumspur Meal also restores 3 ENDURANCE, the player chooses which Meal to eat, and the herb may be used at any time, including between combat rounds (#73, 1119 and 1168)."
+    },
+    "125": {
+      "choices": {
+        "1": {
+          "when": {
+            "all": [
+              {
+                "discipline": "tracking"
+              },
+              {
+                "not": {
+                  "arrivedFrom": 214
+                }
+              }
+            ]
+          }
+        },
+        "3": {
+          "when": {
+            "not": {
+              "arrivedFrom": 214
+            }
+          }
+        }
+      },
+      "note": "Straight after 214 ('turn to 125 and take the south path') only the south exit is offered (board #73, 1173)."
     },
     "136": {
       "effects": [
@@ -762,13 +1094,7 @@
     },
     "213": {},
     "214": {
-      "effects": [
-        {
-          "op": "hook",
-          "name": "returnTo125South"
-        }
-      ],
-      "note": "Requires 214 -> 125 -> 27, allowing only ordinal 2 on that immediate arrival at 125. Pending arrival-condition extension and the 125 encoding; see board #73, 1173. This is unsupported, not an empty reviewed rule."
+      "note": "Leads to 125, where only the south exit is offered on this arrival (125's arrivedFrom rule; board #73, 1173)."
     },
     "215": {},
     "216": {

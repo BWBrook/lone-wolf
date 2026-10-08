@@ -77,7 +77,7 @@ const rules = {
     sword: { slot: 'weapon', weapon: 'sword' },
     dagger: { slot: 'weapon', weapon: 'dagger' },
     meal: { slot: 'backpack', meal: true },
-    healingPotion: { slot: 'backpack', use: { endurance: 4 } },
+    healingPotion: { slot: 'backpack', use: { endurance: 4, notBeforeCombat: true } },
     helmet: { slot: 'special', endurance: 2 },
     map: { slot: 'special' },
     lantern: { slot: 'special' },

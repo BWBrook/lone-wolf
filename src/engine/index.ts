@@ -3,6 +3,7 @@ export { combatResult, ratioColumn } from './crt';
 export {
   IllegalAction,
   apply,
+  automaticChoices,
   availableActions,
   availableChoices,
   exportCharacter,

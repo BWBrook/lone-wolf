@@ -49,10 +49,12 @@ export interface Character {
   backpack: ItemId[];
   specialItems: ItemId[];
   gold: number;
+  hasBackpack: boolean;
 }
 
 export type Pending =
-  | { kind: 'pickup'; offered: ItemId[] }
+  | { kind: 'pickup'; offered: ItemId[]; gold: number }
+  | { kind: 'meal'; options: ItemId[] }
   | { kind: 'combat'; enemyEndurance: number; rounds: number }
   | { kind: 'random' }
   | { kind: 'choose' };
@@ -62,7 +64,7 @@ export interface SectionState {
   effect: number; // index of the effect being resolved
   pending: Pending | null;
   hadCombat: boolean;
-  random: number | null;
+  draws: number[]; // adjusted results of this section's random effects, in order
   rounds: number | null; // rounds fought in this section's latest combat
 }
 
@@ -88,6 +90,8 @@ export type Action =
   | { type: 'take'; item: ItemId }
   | { type: 'drop'; item: ItemId }
   | { type: 'use'; item: ItemId }
+  | { type: 'takeGold' }
+  | { type: 'eat'; item: ItemId }
   | { type: 'continue' }
   | { type: 'roll' }
   | { type: 'fight' }
@@ -116,8 +120,12 @@ export type GameEvent =
   | { type: 'gold'; delta: number; gold: number }
   | { type: 'itemGained'; item: ItemId }
   | { type: 'itemLost'; item: ItemId }
-  | { type: 'meal'; outcome: 'hunted' | 'ate' | 'starved' }
-  | { type: 'died' }
+  | { type: 'meal'; outcome: 'hunted' | 'ate' | 'starved'; item?: ItemId }
+  | { type: 'stolen'; item: ItemId }
+  | { type: 'backpackLost' }
+  | { type: 'combatSkill'; delta: number; combatSkill: number }
+  | { type: 'combatEnded'; combat: number; reason: 'heroLoss' | 'timeout'; to: number }
+  | { type: 'died'; cause: 'endurance' | 'deadEnd' | 'effect' }
   | { type: 'won' };
 
 // A save replays from its seed, so it is valid only for the same book edition,
@@ -134,7 +142,7 @@ export interface SaveGame {
 
 // Carried into the next book; separate from saves and versioned on its own.
 export interface CharacterRecord {
-  version: 1;
+  version: 2;
   completedBook: string;
   combatSkill: number;
   baseEndurance: number;
@@ -144,4 +152,5 @@ export interface CharacterRecord {
   backpack: ItemId[];
   specialItems: ItemId[];
   gold: number;
+  hasBackpack: boolean;
 }

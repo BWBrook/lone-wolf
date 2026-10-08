@@ -93,7 +93,7 @@ describe('character export', () => {
     const results = Array.from({ length: 200 }, (_, seed) => play(seed).state);
     const won = results.find((s) => s.phase === 'won')!;
     const lost = results.find((s) => s.phase === 'dead')!;
-    expect(exportCharacter(book, won)).toMatchObject({ version: 1, completedBook: 'test' });
+    expect(exportCharacter(book, won)).toMatchObject({ version: 2, completedBook: 'test', hasBackpack: true });
     expect(() => exportCharacter(book, lost)).toThrow();
   });
 });

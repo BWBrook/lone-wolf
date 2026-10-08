@@ -28,7 +28,7 @@ export const rules = {
     sword: { slot: 'weapon', weapon: 'sword' },
     dagger: { slot: 'weapon', weapon: 'dagger' },
     meal: { slot: 'backpack', meal: true },
-    potion: { slot: 'backpack', use: { endurance: 4 } },
+    potion: { slot: 'backpack', use: { endurance: 4, notBeforeCombat: true } },
     rope: { slot: 'backpack' },
     helmet: { slot: 'special', endurance: 2 },
     map: { slot: 'special' },
@@ -86,6 +86,7 @@ export function character(overrides: Partial<Character> = {}): Character {
     backpack: ['meal'],
     specialItems: ['map'],
     gold: 10,
+    hasBackpack: true,
     ...overrides,
   };
 }

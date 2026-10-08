@@ -1,4 +1,5 @@
 import {
+  automaticChoices,
   availableActions,
   heroCombatSkill,
   maxEndurance,
@@ -174,8 +175,18 @@ function story(v: View, can: (a: Action) => boolean, button: Button) {
   if (pending.kind === 'pickup') {
     body.push(
       h('h3', {}, 'You may take'),
-      h('div', { class: 'choices' }, [...new Set(pending.offered)].map((item) => button(`Take ${humanize(item)}`, { type: 'take', item }))),
+      h(
+        'div',
+        { class: 'choices' },
+        [...new Set(pending.offered)].map((item) => button(`Take ${humanize(item)}`, { type: 'take', item })),
+        pending.gold > 0 && button(`Take ${pending.gold} Gold Crowns`, { type: 'takeGold' }),
+      ),
       button('Continue', { type: 'continue' }, 'primary'),
+    );
+  } else if (pending.kind === 'meal') {
+    body.push(
+      h('h3', {}, 'Which Meal do you eat?'),
+      h('div', { class: 'choices' }, pending.options.map((item) => button(`Eat ${humanize(item)}`, { type: 'eat', item }))),
     );
   } else if (pending.kind === 'random') {
     body.push(button('Pick a number', { type: 'roll' }, 'primary'));
@@ -194,13 +205,13 @@ function story(v: View, can: (a: Action) => boolean, button: Button) {
       ),
     );
   } else {
-    const evadeOnly = new Set((def.rules.effects ?? []).flatMap((e) => (e.op === 'combat' && e.evade ? [e.evade.choice] : [])));
+    const automatic = automaticChoices(def);
     body.push(
       h(
         'div',
         { class: 'choices' },
         def.choices
-          .filter((ch) => !evadeOnly.has(ch.ordinal))
+          .filter((ch) => !automatic.has(ch.ordinal))
           .map((ch) => button(text?.choices[ch.ordinal] ?? `Turn to ${ch.target}`, { type: 'choose', ordinal: ch.ordinal })),
       ),
     );
@@ -240,7 +251,7 @@ function chart(v: View, can: (a: Action) => boolean) {
     h('h3', {}, 'Kai Disciplines'),
     h('ul', {}, c.disciplines.map((d) => h('li', {}, d === 'weaponskill' && c.weaponskill ? `Weaponskill (${humanize(c.weaponskill)})` : humanize(d)))),
     list('Weapons', c.weapons, 2),
-    list('Backpack', c.backpack, 8),
+    c.hasBackpack ? list('Backpack', c.backpack, 8) : [h('h3', {}, 'Backpack'), h('p', { class: 'empty' }, 'Lost')],
     list('Special Items', c.specialItems),
   );
 }
@@ -270,7 +281,15 @@ function describe(v: View, e: GameEvent): string | null {
     case 'itemLost':
       return `Lost: ${humanize(e.item)}.`;
     case 'meal':
-      return { hunted: 'You hunt for your food.', ate: 'You eat a Meal.', starved: 'You have no food.' }[e.outcome];
+      return { hunted: 'You hunt for your food.', ate: `You eat ${e.item ? humanize(e.item) : 'a Meal'}.`, starved: 'You have no food.' }[e.outcome];
+    case 'stolen':
+      return `Stolen: ${humanize(e.item)}.`;
+    case 'backpackLost':
+      return 'Your Backpack is gone, with everything in it.';
+    case 'combatSkill':
+      return `${signed(e.delta)} COMBAT SKILL, now ${e.combatSkill}.`;
+    case 'combatEnded':
+      return e.reason === 'timeout' ? 'The fight is cut short.' : 'You are wounded, and the fight ends.';
     case 'section':
     case 'died':
     case 'won':

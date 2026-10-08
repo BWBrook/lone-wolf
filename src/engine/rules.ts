@@ -31,21 +31,27 @@ export const WEAPON_KINDS = [
 export type WeaponKind = (typeof WEAPON_KINDS)[number];
 
 const int = z.number().int();
+const Slot = z.enum(['weapon', 'backpack', 'special']);
 export const ItemIdSchema = z.string().regex(/^[a-z][A-Za-z0-9]*$/);
 const ItemId = ItemIdSchema;
 const Ordinal = z.string().regex(/^[1-9]\d*$/);
 
-export const Range = z
-  .strictObject({ min: int.optional(), max: int.optional() })
-  .refine((r) => r.min === undefined || r.max === undefined || r.min <= r.max, 'range min exceeds max');
+const ordered = (r: { min?: number | undefined; max?: number | undefined }) =>
+  r.min === undefined || r.max === undefined || r.min <= r.max;
+export const Range = z.strictObject({ min: int.optional(), max: int.optional() }).refine(ordered, 'range min exceeds max');
 export type Range = z.infer<typeof Range>;
+// draw: which of the section's random draws (1-based); the latest when omitted.
+export const DrawRange = z
+  .strictObject({ min: int.optional(), max: int.optional(), draw: int.positive().optional() })
+  .refine(ordered, 'range min exceeds max');
+export type DrawRange = z.infer<typeof DrawRange>;
 
 export type Condition =
   | { discipline: Discipline }
   | { item: string }
   | { gold: Range }
   | { endurance: Range }
-  | { random: Range }
+  | { random: DrawRange }
   | { rounds: Range }
   | { visited: number }
   | { not: Condition }
@@ -58,7 +64,7 @@ export const Condition: z.ZodType<Condition> = z.lazy(() =>
     z.strictObject({ item: ItemId }),
     z.strictObject({ gold: Range }),
     z.strictObject({ endurance: Range }),
-    z.strictObject({ random: Range }),
+    z.strictObject({ random: DrawRange }),
     z.strictObject({ rounds: Range }),
     z.strictObject({ visited: int.positive() }),
     z.strictObject({ not: Condition }),
@@ -83,15 +89,23 @@ const LoseEffect = z.strictObject({ op: z.literal('lose'), items: z.array(ItemId
 export const AutoEffect = z.discriminatedUnion('op', [EnduranceEffect, GoldEffect, LoseEffect]);
 export type AutoEffect = z.infer<typeof AutoEffect>;
 
-const CombatEffect = z.strictObject({
-  op: z.literal('combat'),
-  combat: int.nonnegative(),
-  mindblastImmune: z.boolean().optional(),
-  unarmed: z.boolean().optional(),
-  modifiers: z.array(z.strictObject({ combatSkill: int, ...when })).optional(),
-  evade: z.strictObject({ afterRounds: int.nonnegative(), choice: int.positive() }).optional(),
-  ...when,
-});
+const ChoiceRef = z.strictObject({ choice: int.positive() });
+// Branches out of a fight. onHeroLoss: leave after any round in which Lone Wolf loses
+// ENDURANCE and survives. maxRounds/timeout: leave if both still stand after that round.
+const CombatEffect = z
+  .strictObject({
+    op: z.literal('combat'),
+    combat: int.nonnegative(),
+    mindblastImmune: z.boolean().optional(),
+    unarmed: z.boolean().optional(),
+    modifiers: z.array(z.strictObject({ combatSkill: int, ...when })).optional(),
+    evade: z.strictObject({ afterRounds: int.nonnegative(), choice: int.positive() }).optional(),
+    onHeroLoss: ChoiceRef.optional(),
+    maxRounds: int.positive().optional(),
+    timeout: ChoiceRef.optional(),
+    ...when,
+  })
+  .refine((e) => (e.maxRounds === undefined) === (e.timeout === undefined), 'maxRounds and timeout go together');
 export type CombatEffect = z.infer<typeof CombatEffect>;
 
 export const Effect = z.discriminatedUnion('op', [
@@ -100,12 +114,24 @@ export const Effect = z.discriminatedUnion('op', [
   LoseEffect,
   // hunting: false marks wasteland or desert, where Hunting does not feed you.
   z.strictObject({ op: z.literal('meal'), hunting: z.boolean().optional(), ...when }),
-  z.strictObject({ op: z.literal('pickup'), items: z.array(ItemId).min(1), ...when }),
+  z
+    .strictObject({ op: z.literal('pickup'), items: z.array(ItemId).optional(), gold: int.positive().optional(), ...when })
+    .refine((e) => (e.items?.length ?? 0) > 0 || e.gold !== undefined, 'a pickup offers at least one item or some gold'),
   CombatEffect,
   z.strictObject({
     op: z.literal('random'),
     modifiers: z.array(z.strictObject({ add: int, when: Condition })).optional(),
+    ...when,
   }),
+  z.strictObject({ op: z.literal('die'), ...when }),
+  z.strictObject({ op: z.literal('restoreEndurance'), ...when }),
+  // Changes base COMBAT SKILL permanently; it carries into later books.
+  z.strictObject({ op: z.literal('combatSkill'), delta: int, ...when }),
+  z.strictObject({ op: z.literal('loseAll'), slots: z.array(Slot).min(1), ...when }),
+  // Loses the Backpack itself and everything in it.
+  z.strictObject({ op: z.literal('loseBackpack'), ...when }),
+  // One carried copy, drawn at random, from `from`, else from `fallback`.
+  z.strictObject({ op: z.literal('stealOne'), from: Slot, fallback: Slot.optional(), ...when }),
   z.strictObject({ op: z.literal('hook'), name: z.string() }),
 ]);
 export type Effect = z.infer<typeof Effect>;
@@ -122,7 +148,8 @@ export const ItemDef = z.discriminatedUnion('slot', [
   z.strictObject({
     slot: z.literal('backpack'),
     meal: z.literal(true).optional(),
-    use: z.strictObject({ endurance: int.positive() }).optional(),
+    // notBeforeCombat: not during a fight, nor while one is still to come in the section.
+    use: z.strictObject({ endurance: int.positive(), notBeforeCombat: z.literal(true).optional() }).optional(),
   }),
   z.strictObject({ slot: z.literal('special'), endurance: int.positive().optional() }),
 ]);

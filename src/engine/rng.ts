@@ -37,3 +37,13 @@ export function draw10(s: RngState): number {
     if (x < 4294967290) return x % 10;
   }
 }
+
+// Uniform 0..n-1 by rejection, for draws the book leaves to chance without a table.
+export function drawBelow(s: RngState, n: number): number {
+  if (!Number.isInteger(n) || n < 1 || n > 0xffffffff) throw new RangeError(`cannot draw below ${n}`);
+  const limit = 0x100000000 - (0x100000000 % n);
+  for (;;) {
+    const x = nextU32(s);
+    if (x < limit) return x % n;
+  }
+}

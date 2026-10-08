@@ -4,7 +4,7 @@ import { DISCIPLINES, ItemIdSchema as ItemId } from './rules';
 import type { EngineBook, GameState, SaveGame } from './types';
 
 // Bump when a change to the engine alters what a recorded action sequence produces.
-export const ENGINE_VERSION = 2;
+export const ENGINE_VERSION = 3;
 
 export class InvalidSave extends Error {}
 export class IncompatibleSave extends Error {}
@@ -18,6 +18,8 @@ const Action = z.discriminatedUnion('type', [
   z.strictObject({ type: z.literal('take'), item: ItemId }),
   z.strictObject({ type: z.literal('drop'), item: ItemId }),
   z.strictObject({ type: z.literal('use'), item: ItemId }),
+  z.strictObject({ type: z.literal('takeGold') }),
+  z.strictObject({ type: z.literal('eat'), item: ItemId }),
   z.strictObject({ type: z.literal('continue') }),
   z.strictObject({ type: z.literal('roll') }),
   z.strictObject({ type: z.literal('fight') }),

@@ -53,11 +53,13 @@ export function buildEngineBook(
   };
   const effect = (where: string, e: Effect, section: EngineSection) => {
     if ('when' in e && e.when) condition(where, e.when);
-    if (e.op === 'pickup' || e.op === 'lose') e.items.forEach((id) => item(where, id));
+    if (e.op === 'pickup' || e.op === 'lose') e.items?.forEach((id) => item(where, id));
     if (e.op === 'combat') {
       if (!section.combats[e.combat]) problems.push(`${where}: no combat ${e.combat}`);
-      if (e.evade && !section.choices.some((ch) => ch.ordinal === e.evade!.choice)) {
-        problems.push(`${where}: evade choice ${e.evade.choice} does not exist`);
+      for (const [label, ref] of [['evade', e.evade], ['onHeroLoss', e.onHeroLoss], ['timeout', e.timeout]] as const) {
+        if (ref && !section.choices.some((ch) => ch.ordinal === ref.choice)) {
+          problems.push(`${where}: ${label} choice ${ref.choice} does not exist`);
+        }
       }
       e.modifiers?.forEach((m) => m.when && condition(where, m.when));
     }

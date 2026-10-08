@@ -1,5 +1,5 @@
 import { combatResult } from './crt';
-import { draw10, seedRng } from './rng';
+import { draw10, drawBelow, seedRng } from './rng';
 import { DISCIPLINES, type AutoEffect, type CombatEffect, type Condition, type Range, type WeaponKind } from './rules';
 import type {
   Action,
@@ -47,6 +47,7 @@ export function newGame(seed: number): GameState {
       backpack: [],
       specialItems: [],
       gold: 0,
+      hasBackpack: true,
     },
     section: null,
     visited: [],
@@ -91,7 +92,11 @@ export function holds(book: EngineBook, s: GameState, cond: Condition): boolean 
   if ('item' in cond) return carried(c).includes(cond.item);
   if ('gold' in cond) return inRange(c.gold, cond.gold);
   if ('endurance' in cond) return inRange(c.endurance, cond.endurance);
-  if ('random' in cond) return s.section?.random != null && inRange(s.section.random, cond.random);
+  if ('random' in cond) {
+    const draws = s.section?.draws ?? [];
+    const value = cond.random.draw === undefined ? draws.at(-1) : draws[cond.random.draw - 1];
+    return value !== undefined && inRange(value, cond.random);
+  }
   if ('rounds' in cond) return s.section?.rounds != null && inRange(s.section.rounds, cond.rounds);
   if ('visited' in cond) return s.visited.includes(cond.visited);
   if ('not' in cond) return !holds(book, s, cond.not);
@@ -121,18 +126,23 @@ export function availableActions(book: EngineBook, s: GameState): Action[] {
 function sectionActions(book: EngineBook, s: GameState): Action[] {
   const sec = s.section!;
   const pending = sec.pending!;
+  const c = s.character;
+  const usable = unique(c.backpack)
+    .filter((item) => canUse(book, s, item))
+    .map((item): Action => ({ type: 'use', item }));
   if (pending.kind === 'combat') {
     const e = currentEffect(book, s) as CombatEffect;
     const actions: Action[] = [{ type: 'fight' }];
     if (e.evade && pending.rounds >= e.evade.afterRounds && choiceAllowed(book, s, e.evade.choice)) {
       actions.push({ type: 'evade' });
     }
-    return actions;
+    return [...actions, ...usable];
   }
-  const c = s.character;
+  if (pending.kind === 'meal') return pending.options.map((item) => ({ type: 'eat', item }));
   const actions: Action[] = [];
   if (pending.kind === 'pickup') {
     for (const item of unique(pending.offered)) if (hasRoom(book, c, item)) actions.push({ type: 'take', item });
+    if (pending.gold > 0) actions.push({ type: 'takeGold' });
     actions.push({ type: 'continue' });
   } else if (pending.kind === 'random') {
     actions.push({ type: 'roll' });
@@ -140,16 +150,23 @@ function sectionActions(book: EngineBook, s: GameState): Action[] {
     for (const ordinal of availableChoices(book, s)) actions.push({ type: 'choose', ordinal });
   }
   for (const item of unique(carried(c))) actions.push({ type: 'drop', item });
-  for (const item of unique(c.backpack)) if (canUse(book, s, item)) actions.push({ type: 'use', item });
-  return actions;
+  return [...actions, ...usable];
 }
 
 export function availableChoices(book: EngineBook, s: GameState): number[] {
   const def = sectionDef(book, s.section!.number);
-  const evadeOnly = new Set((def.rules.effects ?? []).flatMap((e) => (e.op === 'combat' && e.evade ? [e.evade.choice] : [])));
   return def.choices
-    .filter((ch) => !evadeOnly.has(ch.ordinal) && choiceAllowed(book, s, ch.ordinal))
+    .filter((ch) => !automaticChoices(def).has(ch.ordinal) && choiceAllowed(book, s, ch.ordinal))
     .map((ch) => ch.ordinal);
+}
+
+// Choices reached only from inside a fight (evasion, damage branch, timeout), never offered directly.
+export function automaticChoices(def: EngineSection): Set<number> {
+  return new Set(
+    (def.rules.effects ?? []).flatMap((e) =>
+      e.op === 'combat' ? [e.evade?.choice, e.onHeroLoss?.choice, e.timeout?.choice].filter((x) => x !== undefined) : [],
+    ),
+  );
 }
 
 function choiceAllowed(book: EngineBook, s: GameState, ordinal: number): boolean {
@@ -197,6 +214,16 @@ export function apply(book: EngineBook, state: GameState, action: Action): { sta
       gain(book, c, ev, action.item);
       break;
     }
+    case 'takeGold': {
+      const pending = s.section!.pending as { gold: number };
+      changeGold(c, ev, pending.gold);
+      pending.gold = 0;
+      break;
+    }
+    case 'eat':
+      consumeMeal(book, s, ev, action.item);
+      finishEffect(s);
+      break;
     case 'drop':
       lose(book, s, ev, action.item);
       break;
@@ -216,7 +243,7 @@ export function apply(book: EngineBook, state: GameState, action: Action): { sta
       let total = value;
       if (e?.op === 'random') for (const m of e.modifiers ?? []) if (holds(book, s, m.when)) total += m.add;
       (ev.at(-1) as { total?: number }).total = total;
-      s.section!.random = total;
+      s.section!.draws.push(total);
       finishEffect(s);
       break;
     }
@@ -226,14 +253,9 @@ export function apply(book: EngineBook, state: GameState, action: Action): { sta
     case 'evade': {
       const e = currentEffect(book, s) as CombatEffect;
       const pending = s.section!.pending as { rounds: number };
-      if (pending.rounds > 0) fightRound(book, s, ev, true);
-      if (s.phase !== 'section') break;
-      const rule = sectionDef(book, s.section!.number).rules.choices?.[String(e.evade!.choice)];
-      for (const effect of rule?.effects ?? []) applyAuto(book, s, ev, effect);
-      if (s.phase !== 'section') break;
-      const target = choiceTarget(book, s, e.evade!.choice);
-      ev.push({ type: 'evaded', to: target });
-      enterSection(s, ev, target);
+      // The escape round can still kill, or trigger a damage branch, before the escape.
+      if (pending.rounds > 0 && !fightRound(book, s, ev, true)) break;
+      leaveVia(book, s, ev, e.evade!.choice, (to) => ev.push({ type: 'evaded', to }));
       break;
     }
     case 'choose': {
@@ -261,7 +283,7 @@ function advance(book: EngineBook, s: GameState, ev: GameEvent[]): void {
         s.phase = 'won';
         ev.push({ type: 'won' });
       } else if (def.deadEnd) {
-        die(s, ev);
+        die(s, ev, 'deadEnd');
       } else {
         sec.pending = { kind: 'choose' };
       }
@@ -279,11 +301,10 @@ function advance(book: EngineBook, s: GameState, ev: GameEvent[]): void {
         sec.effect++;
         break;
       case 'meal':
-        eat(book, s, ev, e.hunting !== false);
-        sec.effect++;
+        if (startMeal(book, s, ev, e.hunting !== false)) sec.effect++;
         break;
       case 'pickup':
-        sec.pending = { kind: 'pickup', offered: [...e.items] };
+        sec.pending = { kind: 'pickup', offered: [...(e.items ?? [])], gold: e.gold ?? 0 };
         break;
       case 'combat':
         sec.pending = { kind: 'combat', enemyEndurance: def.combats[e.combat]!.endurance, rounds: 0 };
@@ -292,13 +313,43 @@ function advance(book: EngineBook, s: GameState, ev: GameEvent[]): void {
       case 'random':
         sec.pending = { kind: 'random' };
         break;
+      case 'die':
+        die(s, ev, 'effect');
+        break;
+      case 'restoreEndurance':
+        changeEndurance(book, s, ev, maxEndurance(book, s.character) - s.character.endurance, 'effect');
+        sec.effect++;
+        break;
+      case 'combatSkill':
+        s.character.combatSkill += e.delta;
+        ev.push({ type: 'combatSkill', delta: e.delta, combatSkill: s.character.combatSkill });
+        sec.effect++;
+        break;
+      case 'loseAll':
+        for (const slot of e.slots) for (const item of [...slotItems(s.character, slot)]) lose(book, s, ev, item);
+        sec.effect++;
+        break;
+      case 'loseBackpack':
+        if (s.character.hasBackpack) {
+          for (const item of [...s.character.backpack]) lose(book, s, ev, item);
+          s.character.hasBackpack = false;
+          ev.push({ type: 'backpackLost' });
+        }
+        sec.effect++;
+        break;
+      case 'stealOne':
+        steal(book, s, ev, e.from, e.fallback);
+        sec.effect++;
+        break;
       case 'hook':
         throw new Error(`hook ${e.name} is not implemented`);
     }
   }
 }
 
-function fightRound(book: EngineBook, s: GameState, ev: GameEvent[], evading: boolean): void {
+// One round. Afterwards, in order: hero death, damage branch, victory, timeout.
+// Returns true while the fight goes on (for an evasion: the escape may proceed).
+function fightRound(book: EngineBook, s: GameState, ev: GameEvent[], evading: boolean): boolean {
   const sec = s.section!;
   const pending = sec.pending as { enemyEndurance: number; rounds: number };
   const e = currentEffect(book, s) as CombatEffect;
@@ -320,12 +371,45 @@ function fightRound(book: EngineBook, s: GameState, ev: GameEvent[], evading: bo
     enemyEndurance: pending.enemyEndurance,
     evading,
   });
+  const before = s.character.endurance;
   changeEndurance(book, s, ev, heroLoss === 'k' ? -s.character.endurance : -heroLoss, 'combat');
-  if (s.phase !== 'section' || evading) return;
+  if (s.phase !== 'section') return false;
+  if (e.onHeroLoss && s.character.endurance < before) {
+    leaveCombat(book, s, ev, e, 'heroLoss', e.onHeroLoss.choice);
+    return false;
+  }
+  if (evading) return true;
   if (pending.enemyEndurance === 0) {
     ev.push({ type: 'enemyDefeated', combat: e.combat, rounds: pending.rounds });
     finishEffect(s);
+    return false;
   }
+  if (e.maxRounds !== undefined && pending.rounds >= e.maxRounds) {
+    leaveCombat(book, s, ev, e, 'timeout', e.timeout!.choice);
+    return false;
+  }
+  return true;
+}
+
+function leaveCombat(
+  book: EngineBook,
+  s: GameState,
+  ev: GameEvent[],
+  e: CombatEffect,
+  reason: 'heroLoss' | 'timeout',
+  ordinal: number,
+): void {
+  leaveVia(book, s, ev, ordinal, (to) => ev.push({ type: 'combatEnded', combat: e.combat, reason, to }));
+}
+
+// An automatic exit through a choice: its effects apply once, and no Healing is granted.
+function leaveVia(book: EngineBook, s: GameState, ev: GameEvent[], ordinal: number, announce: (to: number) => void): void {
+  const rule = sectionDef(book, s.section!.number).rules.choices?.[String(ordinal)];
+  for (const effect of rule?.effects ?? []) applyAuto(book, s, ev, effect);
+  if (s.phase !== 'section') return;
+  const target = choiceTarget(book, s, ordinal);
+  announce(target);
+  enterSection(s, ev, target);
 }
 
 function applyAuto(book: EngineBook, s: GameState, ev: GameEvent[], e: AutoEffect): void {
@@ -335,23 +419,52 @@ function applyAuto(book: EngineBook, s: GameState, ev: GameEvent[], e: AutoEffec
   else for (const item of e.items) if (carried(s.character).includes(item)) lose(book, s, ev, item);
 }
 
-function eat(book: EngineBook, s: GameState, ev: GameEvent[], huntingFeeds: boolean): void {
+// Returns true once the meal is settled; false when the player must pick which meal to eat.
+function startMeal(book: EngineBook, s: GameState, ev: GameEvent[], huntingFeeds: boolean): boolean {
   const c = s.character;
   if (huntingFeeds && c.disciplines.includes('hunting')) {
     ev.push({ type: 'meal', outcome: 'hunted' });
-    return;
+    return true;
   }
-  const meal = c.backpack.find((id) => {
+  const kinds = unique(c.backpack).filter((id) => {
     const def = book.items[id];
     return def?.slot === 'backpack' && def.meal;
   });
-  if (meal) {
-    c.backpack.splice(c.backpack.indexOf(meal), 1);
-    ev.push({ type: 'meal', outcome: 'ate' }, { type: 'itemLost', item: meal });
+  if (kinds.length > 1) {
+    s.section!.pending = { kind: 'meal', options: kinds };
+    return false;
+  }
+  if (kinds.length === 1) {
+    consumeMeal(book, s, ev, kinds[0]!);
   } else {
     ev.push({ type: 'meal', outcome: 'starved' });
     changeEndurance(book, s, ev, -HUNGER_LOSS, 'hunger');
   }
+  return true;
+}
+
+// A meal item with a use (Laumspur) also restores its ENDURANCE when eaten as a Meal.
+function consumeMeal(book: EngineBook, s: GameState, ev: GameEvent[], item: ItemId): void {
+  s.character.backpack.splice(s.character.backpack.indexOf(item), 1);
+  ev.push({ type: 'meal', outcome: 'ate', item }, { type: 'itemLost', item });
+  const def = book.items[item];
+  if (def?.slot === 'backpack' && def.use) changeEndurance(book, s, ev, def.use.endurance, 'item');
+}
+
+function steal(book: EngineBook, s: GameState, ev: GameEvent[], from: Slot, fallback: Slot | undefined): void {
+  let pool = slotItems(s.character, from);
+  if (!pool.length && fallback) pool = slotItems(s.character, fallback);
+  if (!pool.length) return;
+  const item = pool[drawBelow(s.rng, pool.length)]!;
+  ev.push({ type: 'stolen', item });
+  lose(book, s, ev, item);
+}
+
+type Slot = 'weapon' | 'backpack' | 'special';
+function slotItems(c: Character, slot: Slot): ItemId[] {
+  if (slot === 'weapon') return c.weapons;
+  if (slot === 'backpack') return c.hasBackpack ? c.backpack : [];
+  return c.specialItems;
 }
 
 function changeEndurance(
@@ -373,7 +486,7 @@ function changeEndurance(
   if (change > 0 && cause !== 'healing') s.fatigue = Math.max(0, s.fatigue - change);
   s.fatigue = Math.min(s.fatigue, max - c.endurance);
   if (change !== 0) ev.push({ type: 'endurance', delta: change, endurance: c.endurance, cause });
-  if (c.endurance === 0) die(s, ev);
+  if (c.endurance === 0) die(s, ev, 'endurance');
 }
 
 function changeGold(c: Character, ev: GameEvent[], delta: number): void {
@@ -410,22 +523,24 @@ function lose(book: EngineBook, s: GameState, ev: GameEvent[], item: ItemId): vo
 function hasRoom(book: EngineBook, c: Character, item: ItemId): boolean {
   const def = book.items[item]!;
   if (def.slot === 'weapon') return c.weapons.length < MAX_WEAPONS;
-  if (def.slot === 'backpack') return c.backpack.length < MAX_BACKPACK;
+  if (def.slot === 'backpack') return c.hasBackpack && c.backpack.length < MAX_BACKPACK;
   return true;
 }
 
-// Potions work outside combat, and not while a combat in this section is still to come.
+// Usable items heal at any time, even between combat rounds; one marked notBeforeCombat
+// (the Healing Potion) waits until no fight is under way or still to come in the section.
 function canUse(book: EngineBook, s: GameState, item: ItemId): boolean {
   const def = book.items[item];
   if (def?.slot !== 'backpack' || !def.use) return false;
   if (s.character.endurance >= maxEndurance(book, s.character)) return false;
+  if (!def.use.notBeforeCombat) return true;
   const sec = s.section!;
   const effects = sectionDef(book, sec.number).rules.effects ?? [];
   return !effects.slice(sec.effect).some((e) => e.op === 'combat');
 }
 
 function enterSection(s: GameState, ev: GameEvent[], number: number): void {
-  s.section = { number, effect: 0, pending: null, hadCombat: false, random: null, rounds: null };
+  s.section = { number, effect: 0, pending: null, hadCombat: false, draws: [], rounds: null };
   if (!s.visited.includes(number)) {
     s.visited.push(number);
     s.visited.sort((a, b) => a - b);
@@ -438,9 +553,9 @@ function finishEffect(s: GameState): void {
   s.section!.effect++;
 }
 
-function die(s: GameState, ev: GameEvent[]): void {
+function die(s: GameState, ev: GameEvent[], cause: 'endurance' | 'deadEnd' | 'effect'): void {
   s.phase = 'dead';
-  ev.push({ type: 'died' });
+  ev.push({ type: 'died', cause });
 }
 
 function draw(s: GameState, ev: GameEvent[], purpose: RollPurpose): number {
@@ -478,7 +593,7 @@ function unique<T>(xs: T[]): T[] {
   return [...new Set(xs)];
 }
 
-function inRange(x: number, r: Range): boolean {
+function inRange(x: number, r: Pick<Range, 'min' | 'max'>): boolean {
   return (r.min === undefined || x >= r.min) && (r.max === undefined || x <= r.max);
 }
 
@@ -491,9 +606,10 @@ export function exportCharacter(book: EngineBook, s: GameState): CharacterRecord
   if (s.phase !== 'won') throw new Error('only a character who completed the book can be exported');
   // Completion counts only under complete rules: not in reader or partial development books.
   if (book.unreviewed.length) throw new Error('this book has sections without rules, so completion cannot be exported');
-  const { combatSkill, baseEndurance, disciplines, weaponskill, weapons, backpack, specialItems, gold } = s.character;
+  const { combatSkill, baseEndurance, disciplines, weaponskill, weapons, backpack, specialItems, gold, hasBackpack } =
+    s.character;
   return {
-    version: 1,
+    version: 2,
     completedBook: book.id,
     combatSkill,
     baseEndurance,
@@ -503,5 +619,6 @@ export function exportCharacter(book: EngineBook, s: GameState): CharacterRecord
     backpack: [...backpack],
     specialItems: [...specialItems],
     gold,
+    hasBackpack,
   };
 }

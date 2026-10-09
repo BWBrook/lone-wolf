@@ -600,7 +600,7 @@
           }
         }
       ],
-      "note": "Evasion opens after three rounds; the escape round is the 'chance being wounded as you flee'."
+      "note": "Evasion opens after three completed rounds; an escape round then applies the usual hero-only loss."
     },
     "44": {
       "effects": [
@@ -650,7 +650,7 @@
           ]
         }
       },
-      "note": "Accepting the 2-Crown offer is read as paying it; 246 never charges the fee. Fidelity reading, flagged on the board."
+      "note": "Accepting the priced offer is read as paying 2 Gold once here; 246 adds no further charge. Joint reading accepted on board #73, 1175 and 1282."
     },
     "47": {},
     "48": {},
@@ -765,7 +765,7 @@
           }
         }
       },
-      "note": "Straight after 214 ('turn to 125 and take the south path') only the south exit is offered (board #73, 1173)."
+      "note": "On immediate arrival from 214, only ordinal 2 (target 27) is offered; other arrivals retain normal routes (board #73, 1173)."
     },
     "136": {
       "effects": [
@@ -952,11 +952,12 @@
           "op": "combat",
           "combat": 0,
           "evade": {
-            "afterRounds": 0,
+            "afterRounds": 1,
             "choice": 2
           }
         }
-      ]
+      ],
+      "note": "Evasion requires one completed round, unlike the immediate option in 220. Reconciled on board #73, 1175 and 1282."
     },
     "192": {},
     "193": {

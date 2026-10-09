@@ -180,8 +180,14 @@ function story(v: View, can: (a: Action) => boolean, button: Button) {
         { class: 'choices' },
         [...new Set(pending.offered)].map((item) => button(`Take ${humanize(item)}`, { type: 'take', item })),
         pending.gold > 0 && button(`Take ${pending.gold} Gold Crowns`, { type: 'takeGold' }),
+        pending.backpack && can({ type: 'takeBackpack' }) && button('Take the Backpack', { type: 'takeBackpack' }),
       ),
       button('Continue', { type: 'continue' }, 'primary'),
+    );
+  } else if (pending.kind === 'loseOne') {
+    body.push(
+      h('h3', {}, 'Which one do you lose?'),
+      h('div', { class: 'choices' }, pending.options.map((item) => button(`Lose ${humanize(item)}`, { type: 'loseItem', item }))),
     );
   } else if (pending.kind === 'meal') {
     body.push(
@@ -286,6 +292,8 @@ function describe(v: View, e: GameEvent): string | null {
       return `Stolen: ${humanize(e.item)}.`;
     case 'backpackLost':
       return 'Your Backpack is gone, with everything in it.';
+    case 'backpackGained':
+      return 'You have a Backpack again.';
     case 'combatSkill':
       return `${signed(e.delta)} COMBAT SKILL, now ${e.combatSkill}.`;
     case 'combatEnded':

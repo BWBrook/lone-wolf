@@ -5,6 +5,7 @@ import {
   availableChoices,
   buildEngineBook,
   exportCharacter,
+  holds,
   maxEndurance,
   newSave,
   replay,
@@ -41,6 +42,10 @@ const imported = {
     plain(61, c(1, 99)),
     plain(62, c(1, 99), c(2, 60)),
     plain(63, c(1, 60)),
+    plain(70, c(1, 99)),
+    plain(71, c(1, 99)),
+    plain(72, c(1, 99), c(2, 99)),
+    fight(73, 15, 1000, c(1, 99)),
     plain(99),
   ],
 };
@@ -93,6 +98,22 @@ const rules = {
     '32': { effects: [{ op: 'combat', combat: 0 }] },
     '33': { effects: [{ op: 'combat', combat: 0, maxRounds: 1, timeout: { choice: 2 }, onHeroLoss: { choice: 3 } }] },
     '34': { effects: [{ op: 'combat', combat: 0, maxRounds: 4, timeout: { choice: 2 } }] },
+    '70': { effects: [{ op: 'pickup', items: ['meal', 'meal', 'sword'], backpack: true }] },
+    '71': { effects: [{ op: 'loseOne', from: 'weapon' }] },
+    '72': { choices: { '1': { when: { inventory: { slot: 'backpack', min: 1 } } } } },
+    // The 283 pattern: +2 for the first round only, then -2 without Mindshield.
+    '73': {
+      effects: [
+        {
+          op: 'combat',
+          combat: 0,
+          modifiers: [
+            { combatSkill: 2, when: { not: { rounds: { min: 1 } } } },
+            { combatSkill: -2, when: { all: [{ rounds: { min: 1 } }, { not: { discipline: 'mindshield' } }] } },
+          ],
+        },
+      ],
+    },
     // The 214 -> 125 pattern: returning from 63 allows only 60's second exit.
     '60': {
       choices: {
@@ -358,6 +379,77 @@ describe('arrival-dependent choices (the 214 -> 125 pattern)', () => {
   });
 });
 
+describe('a replacement Backpack (the section 20 pattern)', () => {
+  it('lets someone without a Backpack take it once, and then carry the Meals', () => {
+    let s = at(70, { backpack: [], hasBackpack: false });
+    const offered = availableActions(book, s);
+    expect(offered).toContainEqual({ type: 'takeBackpack' });
+    expect(offered).not.toContainEqual({ type: 'take', item: 'meal' });
+    expect(offered).toContainEqual({ type: 'take', item: 'sword' });
+    const taken = act(s, { type: 'takeBackpack' });
+    expect(taken.events).toContainEqual({ type: 'backpackGained' });
+    s = taken.state;
+    expect(s.character.hasBackpack).toBe(true);
+    expect(() => act(s, { type: 'takeBackpack' })).toThrow(/not available/);
+    s = act(act(s, { type: 'take', item: 'meal' }).state, { type: 'take', item: 'meal' }).state;
+    expect(s.character.backpack).toEqual(['meal', 'meal']);
+  });
+
+  it('leaves the Meals behind if the Backpack is declined, and is inert for someone who has one', () => {
+    const declined = act(at(70, { backpack: [], hasBackpack: false }), { type: 'continue' }).state;
+    expect(declined.character).toMatchObject({ hasBackpack: false, backpack: [] });
+    expect(availableActions(book, at(70))).not.toContainEqual({ type: 'takeBackpack' });
+  });
+});
+
+describe('losing one item of the player\'s choice (the section 277 pattern)', () => {
+  it('waits for the choice when different weapons are carried, and nothing else bypasses it', () => {
+    const s = at(71, { weapons: ['axe', 'sword'] });
+    expect(availableActions(book, s)).toEqual([
+      { type: 'loseItem', item: 'axe' },
+      { type: 'loseItem', item: 'sword' },
+    ]);
+    const after = act(s, { type: 'loseItem', item: 'sword' }).state;
+    expect(after.character).toMatchObject({ weapons: ['axe'], backpack: ['meal'], gold: 10, hasBackpack: true });
+    expect(after.section!.pending).toEqual({ kind: 'choose' });
+  });
+
+  it('loses one copy automatically when only one kind is carried, and skips an empty slot', () => {
+    expect(at(71, { weapons: ['sword', 'sword'] }).character.weapons).toEqual(['sword']);
+    const none = at(71, { weapons: [] }, 9);
+    expect(none.section!.pending).toEqual({ kind: 'choose' });
+    expect(none.rng).toEqual(seedRng(9));
+  });
+});
+
+describe('inventory conditions (the section 247 pattern)', () => {
+  it('count carried copies in a slot, and nothing for a lost Backpack', () => {
+    expect(availableChoices(book, at(72, { backpack: [] }))).toEqual([2]);
+    expect(availableChoices(book, at(72, { backpack: ['rope'], hasBackpack: false }))).toEqual([2]);
+    expect(availableChoices(book, at(72, { backpack: ['rope'] }))).toEqual([1, 2]);
+    const twoOrThree = { inventory: { slot: 'backpack' as const, min: 2, max: 3 } };
+    expect(holds(book, at(72, { backpack: ['meal', 'meal'] }), twoOrThree)).toBe(true);
+    expect(holds(book, at(72, { backpack: ['meal', 'meal', 'rope', 'rope'] }), twoOrThree)).toBe(false);
+  });
+});
+
+describe('first-round and later-round modifiers (the section 283 pattern)', () => {
+  it('apply +2 to the first round only, then -2 unless Mindshield', () => {
+    const skills = (o: Partial<Character>) => {
+      let s = at(73, { endurance: 40, ...o });
+      const out: number[] = [];
+      for (let i = 0; i < 3; i++) {
+        const r = act(s, { type: 'fight' });
+        out.push(...r.events.flatMap((e) => (e.type === 'combatRound' ? [e.combatSkill] : [])));
+        s = r.state;
+      }
+      return out;
+    };
+    expect(skills({})).toEqual([17, 13, 13]);
+    expect(skills({ disciplines: ['mindshield'] })).toEqual([17, 15, 15]);
+  });
+});
+
 describe('meals and usable items', () => {
   it('lets the player choose which Meal to eat; a healing Meal also restores ENDURANCE', () => {
     const s = at(29, { backpack: ['meal', 'laumspur'], endurance: 20 });
@@ -404,8 +496,10 @@ describe('saves and validation', () => {
         x = (Math.imul(x ^ (x >>> 15), 0x2c1b3c6d) + 0x9e3779b9) | 0;
         return xs[(x >>> 0) % xs.length]!;
       };
-      const start = [20, 23, 24, 25, 26, 27, 28, 29, 32, 33, 34][seed % 11]!;
-      let s = at(start, { backpack: ['meal', 'laumspur', 'potion', 'rope'], weapons: ['axe', 'sword'], endurance: 15 }, seed);
+      const start = [20, 23, 24, 25, 26, 27, 28, 29, 32, 33, 34, 70, 71, 72][seed % 14]!;
+      const hasBackpack = seed % 3 > 0;
+      const kit = { backpack: hasBackpack ? ['meal', 'laumspur', 'potion', 'rope'] : [], weapons: ['axe', 'sword'], endurance: 15, hasBackpack };
+      let s = at(start, kit, seed);
       const actions: Action[] = [];
       for (let i = 0; i < 60 && availableActions(book, s).length; i++) {
         const a = pick(availableActions(book, s));
@@ -419,7 +513,7 @@ describe('saves and validation', () => {
         if (!ch.hasBackpack) expect(ch.backpack).toEqual([]);
       }
       // Replay from a save made at the same start: rebuild via startAt plus the same actions.
-      let again = at(start, { backpack: ['meal', 'laumspur', 'potion', 'rope'], weapons: ['axe', 'sword'], endurance: 15 }, seed);
+      let again = at(start, kit, seed);
       for (const a of actions) again = act(again, a).state;
       expect(again).toEqual(s);
     }
@@ -433,7 +527,7 @@ describe('saves and validation', () => {
   it.each([
     ['a damage-branch choice that does not exist', (r: any) => (r.sections['27'].effects[0].onHeroLoss.choice = 9), /onHeroLoss choice 9/],
     ['a round limit without a timeout', (r: any) => delete r.sections['28'].effects[0].timeout, /maxRounds and timeout/],
-    ['a pickup offering nothing', (r: any) => (r.sections['26'].effects[0] = { op: 'pickup' }), /at least one item or some gold/],
+    ['a pickup offering nothing', (r: any) => (r.sections['26'].effects[0] = { op: 'pickup' }), /at least one item, some gold or a Backpack/],
     ['a draw index of 0', (r: any) => (r.sections['20'].choices['1'].when.random.draw = 0), /draw|too small/i],
   ])('rejects %s', (_, patch, message) => {
     const r = JSON.parse(JSON.stringify(rules));

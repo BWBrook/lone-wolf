@@ -1,6 +1,6 @@
 import { combatResult } from './crt';
 import { draw10, drawBelow, seedRng } from './rng';
-import { DISCIPLINES, type AutoEffect, type CombatEffect, type Condition, type Range, type WeaponKind } from './rules';
+import { DISCIPLINES, type AutoEffect, type CombatEffect, type Condition, type Range, type Slot, type WeaponKind } from './rules';
 import type {
   Action,
   Character,
@@ -100,6 +100,7 @@ export function holds(book: EngineBook, s: GameState, cond: Condition): boolean 
   if ('rounds' in cond) return s.section?.rounds != null && inRange(s.section.rounds, cond.rounds);
   if ('visited' in cond) return s.visited.includes(cond.visited);
   if ('arrivedFrom' in cond) return s.section?.from === cond.arrivedFrom;
+  if ('inventory' in cond) return inRange(slotItems(c, cond.inventory.slot).length, cond.inventory);
   if ('not' in cond) return !holds(book, s, cond.not);
   if ('all' in cond) return cond.all.every((x) => holds(book, s, x));
   return cond.any.some((x) => holds(book, s, x));
@@ -140,10 +141,12 @@ function sectionActions(book: EngineBook, s: GameState): Action[] {
     return [...actions, ...usable];
   }
   if (pending.kind === 'meal') return pending.options.map((item) => ({ type: 'eat', item }));
+  if (pending.kind === 'loseOne') return pending.options.map((item) => ({ type: 'loseItem', item }));
   const actions: Action[] = [];
   if (pending.kind === 'pickup') {
     for (const item of unique(pending.offered)) if (hasRoom(book, c, item)) actions.push({ type: 'take', item });
     if (pending.gold > 0) actions.push({ type: 'takeGold' });
+    if (pending.backpack && !c.hasBackpack) actions.push({ type: 'takeBackpack' });
     actions.push({ type: 'continue' });
   } else if (pending.kind === 'random') {
     actions.push({ type: 'roll' });
@@ -221,8 +224,17 @@ export function apply(book: EngineBook, state: GameState, action: Action): { sta
       pending.gold = 0;
       break;
     }
+    case 'takeBackpack':
+      (s.section!.pending as { backpack: boolean }).backpack = false;
+      c.hasBackpack = true;
+      ev.push({ type: 'backpackGained' });
+      break;
     case 'eat':
       consumeMeal(book, s, ev, action.item);
+      finishEffect(s);
+      break;
+    case 'loseItem':
+      lose(book, s, ev, action.item);
       finishEffect(s);
       break;
     case 'drop':
@@ -305,7 +317,7 @@ function advance(book: EngineBook, s: GameState, ev: GameEvent[]): void {
         if (startMeal(book, s, ev, e.hunting !== false)) sec.effect++;
         break;
       case 'pickup':
-        sec.pending = { kind: 'pickup', offered: [...(e.items ?? [])], gold: e.gold ?? 0 };
+        sec.pending = { kind: 'pickup', offered: [...(e.items ?? [])], gold: e.gold ?? 0, backpack: e.backpack === true };
         break;
       case 'combat':
         sec.pending = { kind: 'combat', enemyEndurance: def.combats[e.combat]!.endurance, rounds: 0 };
@@ -338,6 +350,16 @@ function advance(book: EngineBook, s: GameState, ev: GameEvent[]): void {
         }
         sec.effect++;
         break;
+      case 'loseOne': {
+        const kinds = unique(slotItems(s.character, e.from));
+        if (kinds.length > 1) {
+          sec.pending = { kind: 'loseOne', options: kinds };
+          break;
+        }
+        if (kinds.length === 1) lose(book, s, ev, kinds[0]!);
+        sec.effect++;
+        break;
+      }
       case 'stealOne':
         steal(book, s, ev, e.from, e.fallback);
         sec.effect++;
@@ -461,7 +483,6 @@ function steal(book: EngineBook, s: GameState, ev: GameEvent[], from: Slot, fall
   lose(book, s, ev, item);
 }
 
-type Slot = 'weapon' | 'backpack' | 'special';
 function slotItems(c: Character, slot: Slot): ItemId[] {
   if (slot === 'weapon') return c.weapons;
   if (slot === 'backpack') return c.hasBackpack ? c.backpack : [];

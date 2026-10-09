@@ -31,7 +31,8 @@ export const WEAPON_KINDS = [
 export type WeaponKind = (typeof WEAPON_KINDS)[number];
 
 const int = z.number().int();
-const Slot = z.enum(['weapon', 'backpack', 'special']);
+export const Slot = z.enum(['weapon', 'backpack', 'special']);
+export type Slot = z.infer<typeof Slot>;
 export const ItemIdSchema = z.string().regex(/^[a-z][A-Za-z0-9]*$/);
 const ItemId = ItemIdSchema;
 const Ordinal = z.string().regex(/^[1-9]\d*$/);
@@ -45,6 +46,11 @@ export const DrawRange = z
   .strictObject({ min: int.optional(), max: int.optional(), draw: int.positive().optional() })
   .refine(ordered, 'range min exceeds max');
 export type DrawRange = z.infer<typeof DrawRange>;
+// Carried copies in a slot (a lost Backpack holds none).
+export const InventoryRange = z
+  .strictObject({ slot: Slot, min: int.nonnegative().optional(), max: int.nonnegative().optional() })
+  .refine(ordered, 'range min exceeds max');
+export type InventoryRange = z.infer<typeof InventoryRange>;
 
 export type Condition =
   | { discipline: Discipline }
@@ -55,6 +61,7 @@ export type Condition =
   | { rounds: Range }
   | { visited: number }
   | { arrivedFrom: number }
+  | { inventory: InventoryRange }
   | { not: Condition }
   | { all: Condition[] }
   | { any: Condition[] };
@@ -70,6 +77,7 @@ export const Condition: z.ZodType<Condition> = z.lazy(() =>
     z.strictObject({ visited: int.positive() }),
     // The section played immediately before this one; null at the start of a book.
     z.strictObject({ arrivedFrom: int.positive() }),
+    z.strictObject({ inventory: InventoryRange }),
     z.strictObject({ not: Condition }),
     z.strictObject({ all: z.array(Condition).min(1) }),
     z.strictObject({ any: z.array(Condition).min(1) }),
@@ -117,9 +125,19 @@ export const Effect = z.discriminatedUnion('op', [
   LoseEffect,
   // hunting: false marks wasteland or desert, where Hunting does not feed you.
   z.strictObject({ op: z.literal('meal'), hunting: z.boolean().optional(), ...when }),
+  // backpack: also offers a replacement Backpack, takeable only by someone without one.
   z
-    .strictObject({ op: z.literal('pickup'), items: z.array(ItemId).optional(), gold: int.positive().optional(), ...when })
-    .refine((e) => (e.items?.length ?? 0) > 0 || e.gold !== undefined, 'a pickup offers at least one item or some gold'),
+    .strictObject({
+      op: z.literal('pickup'),
+      items: z.array(ItemId).optional(),
+      gold: int.positive().optional(),
+      backpack: z.literal(true).optional(),
+      ...when,
+    })
+    .refine(
+      (e) => (e.items?.length ?? 0) > 0 || e.gold !== undefined || e.backpack === true,
+      'a pickup offers at least one item, some gold or a Backpack',
+    ),
   CombatEffect,
   z.strictObject({
     op: z.literal('random'),
@@ -133,6 +151,8 @@ export const Effect = z.discriminatedUnion('op', [
   z.strictObject({ op: z.literal('loseAll'), slots: z.array(Slot).min(1), ...when }),
   // Loses the Backpack itself and everything in it.
   z.strictObject({ op: z.literal('loseBackpack'), ...when }),
+  // One carried copy chosen by the player (automatic when only one kind is carried).
+  z.strictObject({ op: z.literal('loseOne'), from: Slot, ...when }),
   // One carried copy, drawn at random, from `from`, else from `fallback`.
   z.strictObject({ op: z.literal('stealOne'), from: Slot, fallback: Slot.optional(), ...when }),
   z.strictObject({ op: z.literal('hook'), name: z.string() }),

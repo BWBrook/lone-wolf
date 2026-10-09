@@ -331,19 +331,16 @@
     "20": {
       "effects": [
         {
-          "op": "hook",
-          "name": "s20_backpackPickup"
-        },
-        {
           "op": "pickup",
           "items": [
             "meal",
             "meal",
             "dagger"
-          ]
+          ],
+          "backpack": true
         }
       ],
-      "note": "Also offers a replacement Backpack: taking it restores hasBackpack, so the Meals can then be carried. Proposed: pickup {backpack: true} with a takeBackpack action (board #73)."
+      "note": "Offers a replacement Backpack (pickup backpack), inert for someone who has one; the Meals become takeable once it is taken (board #73, 1175 and 1282)."
     },
     "21": {
       "effects": [
@@ -720,6 +717,194 @@
     "58": {},
     "59": {},
     "60": {},
+    "61": {},
+    "62": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "meal",
+            "meal",
+            "meal",
+            "sword"
+          ],
+          "gold": 28,
+          "backpack": true
+        }
+      ],
+      "note": "Found gold, three Meals and one of the Swords are offered; the bandits' Backpacks can replace a lost one and are inert otherwise."
+    },
+    "63": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0
+        }
+      ]
+    },
+    "64": {},
+    "65": {},
+    "66": {},
+    "67": {},
+    "68": {},
+    "69": {},
+    "70": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        }
+      }
+    },
+    "71": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        }
+      }
+    },
+    "72": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0
+        }
+      ],
+      "note": "One combined enemy."
+    },
+    "73": {},
+    "74": {},
+    "75": {},
+    "76": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -2
+        },
+        {
+          "op": "pickup",
+          "items": [
+            "vordakGem"
+          ]
+        }
+      ],
+      "note": "The burn is a wound, applied before the Gem is taken."
+    },
+    "77": {},
+    "78": {},
+    "79": {},
+    "80": {
+      "note": "The injury was applied in 203; no further loss here."
+    },
+    "81": {},
+    "82": {},
+    "83": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        }
+      }
+    },
+    "84": {},
+    "85": {},
+    "86": {},
+    "87": {
+      "note": "Small cuts are narrated without a numeric loss."
+    },
+    "88": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "healing"
+          }
+        }
+      },
+      "note": "Ordinal 2 stays open to anyone, including a healer who declines."
+    },
+    "89": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 1
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 2,
+              "max": 4
+            }
+          }
+        },
+        "3": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "90": {},
+    "91": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        }
+      }
+    },
+    "92": {},
+    "93": {},
+    "94": {
+      "effects": [
+        {
+          "op": "pickup",
+          "gold": 16
+        }
+      ],
+      "note": "The two finds (12 and 4 Gold Crowns) are offered together."
+    },
+    "95": {},
+    "96": {},
+    "97": {},
+    "98": {},
+    "99": {},
+    "100": {},
+    "101": {},
+    "102": {},
+    "103": {},
+    "104": {},
+    "105": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "animalKinship"
+          }
+        }
+      },
+      "note": "Ordinal 2 stays open to anyone, including those who decline."
+    },
+    "106": {},
+    "107": {},
+    "108": {},
+    "109": {},
+    "110": {},
     "112": {
       "effects": [
         {
@@ -1306,13 +1491,17 @@
       "note": "The ferry fee is already charged at 46 on acceptance; it is not charged again here (board #73, 1282)."
     },
     "247": {
-      "effects": [
-        {
-          "op": "hook",
-          "name": "s247_backpackOffer"
+      "choices": {
+        "1": {
+          "when": {
+            "inventory": {
+              "slot": "backpack",
+              "min": 1
+            }
+          }
         }
-      ],
-      "note": "Ordinal 1 requires at least one carried Backpack Item. Pending inventory-count condition proposed on board #73, 1283. The unsuccessful offer at 159 does not remove an item; no monetary value is invented."
+      },
+      "note": "Ordinal 1 requires at least one carried Backpack Item; the failed offer at 159 removes nothing (board #73, 1283)."
     },
     "248": {},
     "249": {},
@@ -1492,11 +1681,11 @@
     "277": {
       "effects": [
         {
-          "op": "hook",
-          "name": "s277_chooseBrokenWeapon"
+          "op": "loseOne",
+          "from": "weapon"
         }
       ],
-      "note": "Exactly one weapon is lost, chosen by the player when there are multiple kinds. Pending loseOne effect and selection action proposed on board #73, 1283. Existing Backpack state and contents are retained."
+      "note": "One weapon is lost, chosen by the player when more than one kind is carried; the Backpack and its contents are kept (board #73, 1283)."
     },
     "278": {},
     "279": {

@@ -80,6 +80,9 @@
     "dagger": {
       "slot": "weapon",
       "weapon": "dagger"
+    },
+    "message": {
+      "slot": "backpack"
     }
   },
   "setup": {
@@ -1202,6 +1205,21 @@
     },
     "232": {},
     "233": {},
+    "234": {},
+    "235": {
+      "effects": [
+        {
+          "op": "meal"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "tracking"
+          }
+        }
+      }
+    },
     "236": {
       "effects": [
         {
@@ -1221,6 +1239,86 @@
       ],
       "note": "Only one Gem is lost, before the damage (#73, 1115 and 1116)."
     },
+    "237": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "238": {},
+    "239": {},
+    "240": {},
+    "241": {},
+    "242": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "mindshield"
+          }
+        },
+        "2": {
+          "when": {
+            "not": {
+              "discipline": "mindshield"
+            }
+          }
+        }
+      }
+    },
+    "243": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "mace"
+          ]
+        }
+      ]
+    },
+    "244": {},
+    "245": {},
+    "246": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0
+        }
+      ],
+      "note": "The ferry fee is already charged at 46 on acceptance; it is not charged again here (board #73, 1282)."
+    },
+    "247": {
+      "effects": [
+        {
+          "op": "hook",
+          "name": "s247_backpackOffer"
+        }
+      ],
+      "note": "Ordinal 1 requires at least one carried Backpack Item. Pending inventory-count condition proposed on board #73, 1283. The unsuccessful offer at 159 does not remove an item; no monetary value is invented."
+    },
+    "248": {},
+    "249": {},
+    "250": {},
+    "251": {},
+    "252": {},
     "253": {
       "effects": [
         {
@@ -1241,6 +1339,7 @@
         }
       ]
     },
+    "254": {},
     "255": {
       "effects": [
         {
@@ -1257,6 +1356,22 @@
       ],
       "note": "The Prince's Sword is treated as an ordinary Sword."
     },
+    "256": {},
+    "257": {},
+    "258": {
+      "effects": [
+        {
+          "op": "loseAll",
+          "slots": [
+            "weapon"
+          ]
+        },
+        {
+          "op": "loseBackpack"
+        }
+      ]
+    },
+    "259": {},
     "260": {
       "effects": [
         {
@@ -1271,6 +1386,10 @@
         }
       ]
     },
+    "261": {},
+    "262": {
+      "note": "The 10-Gold payment is already deducted on choice 1 of section 12, the only incoming route. No second payment or whole-purse loss is added."
+    },
     "263": {
       "effects": [
         {
@@ -1279,6 +1398,182 @@
         }
       ]
     },
+    "264": {},
+    "265": {},
+    "266": {},
+    "267": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "message",
+            "dagger"
+          ]
+        }
+      ],
+      "note": "message is distinct from the scroll in 193. It uses the default Backpack slot; no Special Item designation is given."
+    },
+    "268": {
+      "note": "No numeric ENDURANCE restoration is specified."
+    },
+    "269": {
+      "effects": [
+        {
+          "op": "gold",
+          "delta": 10
+        }
+      ],
+      "note": "The reward is given, so it is an automatic gain. The escort remains optional."
+    },
+    "270": {},
+    "271": {},
+    "272": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "tracking"
+          }
+        },
+        "2": {
+          "when": {
+            "not": {
+              "discipline": "tracking"
+            }
+          }
+        }
+      }
+    },
+    "273": {},
+    "274": {
+      "effects": [
+        {
+          "op": "loseAll",
+          "slots": [
+            "weapon"
+          ]
+        }
+      ],
+      "note": "All weapons are lost; Backpack state and contents are retained."
+    },
+    "275": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "276": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -1
+        }
+      ],
+      "note": "The mandatory 1-point loss is a wound, applied before continuing; there is no fatigue tag."
+    },
+    "277": {
+      "effects": [
+        {
+          "op": "hook",
+          "name": "s277_chooseBrokenWeapon"
+        }
+      ],
+      "note": "Exactly one weapon is lost, chosen by the player when there are multiple kinds. Pending loseOne effect and selection action proposed on board #73, 1283. Existing Backpack state and contents are retained."
+    },
+    "278": {},
+    "279": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 6
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 7,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "280": {},
+    "281": {},
+    "282": {
+      "note": "The narrative disguise and bottles are not designated Action Chart acquisitions; no inventory effects are added."
+    },
+    "283": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "modifiers": [
+            {
+              "combatSkill": 2,
+              "when": {
+                "not": {
+                  "rounds": {
+                    "min": 1
+                  }
+                }
+              }
+            },
+            {
+              "combatSkill": -2,
+              "when": {
+                "all": [
+                  {
+                    "rounds": {
+                      "min": 1
+                    }
+                  },
+                  {
+                    "not": {
+                      "discipline": "mindshield"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "note": "Before the first roll rounds is null, so not(rounds >= 1) applies the first-round +2. Later rounds apply -2 only without Mindshield. Both are temporary combat modifiers; no Mindblast immunity is stated."
+    },
+    "284": {
+      "note": "No numeric damage is specified, so none is invented."
+    },
+    "285": {},
+    "286": {},
+    "287": {},
+    "288": {},
     "294": {
       "effects": [
         {

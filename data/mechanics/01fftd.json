@@ -90,6 +90,18 @@
     },
     "perfumedSoap": {
       "slot": "backpack"
+    },
+    "silverKey": {
+      "slot": "backpack"
+    },
+    "tombGuardianGems": {
+      "slot": "backpack"
+    },
+    "alether": {
+      "slot": "backpack",
+      "use": {
+        "combatSkill": 2
+      }
     }
   },
   "setup": {
@@ -912,6 +924,7 @@
     "108": {},
     "109": {},
     "110": {},
+    "111": {},
     "112": {
       "effects": [
         {
@@ -935,6 +948,37 @@
         }
       ],
       "note": "Footnote 1: a Laumspur Meal also restores 3 ENDURANCE, the player chooses which Meal to eat, and the herb may be used at any time, including between combat rounds (#73, 1119 and 1168)."
+    },
+    "114": {},
+    "115": {},
+    "116": {},
+    "117": {
+      "note": "The optional easing of pain changes no numbers."
+    },
+    "118": {},
+    "119": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -2
+        }
+      ],
+      "note": "Scratches are wounds; the drowsiness has no numeric effect."
+    },
+    "120": {},
+    "121": {},
+    "122": {},
+    "123": {},
+    "124": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "silverKey"
+          ],
+          "gold": 15
+        }
+      ]
     },
     "125": {
       "choices": {
@@ -962,6 +1006,47 @@
       },
       "note": "On immediate arrival from 214, only ordinal 2 (target 27) is offered; other arrivals retain normal routes (board #73, 1173)."
     },
+    "126": {},
+    "127": {},
+    "128": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "hunting"
+          }
+        },
+        "2": {
+          "when": {
+            "not": {
+              "discipline": "hunting"
+            }
+          }
+        }
+      }
+    },
+    "129": {},
+    "130": {
+      "effects": [
+        {
+          "op": "meal"
+        }
+      ]
+    },
+    "131": {},
+    "132": {
+      "note": "Food is provided, so no Meal is consumed and none is required."
+    },
+    "133": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "mindblastImmune": true
+        }
+      ]
+    },
+    "134": {},
+    "135": {},
     "136": {
       "effects": [
         {
@@ -984,6 +1069,17 @@
         }
       ]
     },
+    "137": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "tombGuardianGems"
+          ]
+        }
+      ],
+      "note": "The twenty Gems form one Backpack Item."
+    },
     "138": {
       "effects": [
         {
@@ -996,6 +1092,11 @@
         }
       ]
     },
+    "139": {},
+    "140": {},
+    "141": {},
+    "142": {},
+    "143": {},
     "144": {
       "effects": [
         {
@@ -1010,6 +1111,17 @@
       ],
       "note": "Barry's ruling (7 Oct 2026, #73 1116): the stolen item is a random carried copy, not the player's choice."
     },
+    "145": {
+      "note": "No numeric loss is specified."
+    },
+    "146": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -3
+        }
+      ]
+    },
     "147": {
       "effects": [
         {
@@ -1017,6 +1129,94 @@
         }
       ],
       "note": "Footnote 2 swaps which wording goes with which destination on first arrival from 42; both destinations are always offered, so this is presentation, not a rule (#73, 1116 and 1118)."
+    },
+    "148": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "warhammer"
+          ]
+        }
+      ]
+    },
+    "149": {},
+    "150": {
+      "note": "The food is less than a Meal, so nothing is gained or consumed."
+    },
+    "151": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "mindOverMatter"
+          }
+        }
+      },
+      "note": "Reached through the Mind Over Matter route from 23; gated for consistency."
+    },
+    "152": {},
+    "153": {},
+    "154": {},
+    "155": {},
+    "156": {},
+    "157": {},
+    "158": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -6
+        },
+        {
+          "op": "random"
+        },
+        {
+          "op": "endurance",
+          "delta": -4,
+          "when": {
+            "random": {
+              "min": 6,
+              "max": 9
+            }
+          }
+        }
+      ],
+      "note": "Both bolts are wounds; a 0-5 draw misses. The Key is not consumed."
+    },
+    "159": {},
+    "160": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "161": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "goldenKey"
+          ]
+        }
+      ]
     },
     "162": {
       "effects": [
@@ -1045,6 +1245,19 @@
         }
       }
     },
+    "163": {},
+    "164": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "alether"
+          ]
+        }
+      ],
+      "note": "Alether gives +2 COMBAT SKILL for one fight when drunk before its first round."
+    },
+    "165": {},
     "166": {
       "effects": [
         {
@@ -1054,6 +1267,110 @@
         }
       ],
       "note": "Barry's ruling (7 Oct 2026, #73 1116): the ordeal is not a wound, so Healing cannot restore it. No Mindshield exception."
+    },
+    "167": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        }
+      }
+    },
+    "168": {
+      "effects": [
+        {
+          "op": "meal"
+        }
+      ]
+    },
+    "169": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "evade": {
+            "afterRounds": 1,
+            "choice": 1
+          }
+        }
+      ],
+      "note": "One combined enemy; evasion opens after one completed round."
+    },
+    "170": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "mindblastImmune": true,
+          "modifiers": [
+            {
+              "combatSkill": -3,
+              "when": {
+                "not": {
+                  "all": [
+                    {
+                      "item": "torch"
+                    },
+                    {
+                      "item": "tinderbox"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "note": "Lighting a Torch needs a Tinderbox too, so the -3 applies unless both are carried. The Torch is not consumed."
+    },
+    "171": {},
+    "172": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "camouflage"
+          }
+        }
+      }
+    },
+    "173": {
+      "choices": {
+        "1": {
+          "when": {
+            "item": "silverKey"
+          }
+        },
+        "2": {
+          "when": {
+            "not": {
+              "item": "silverKey"
+            }
+          }
+        }
+      }
+    },
+    "174": {
+      "effects": [
+        {
+          "op": "loseAll",
+          "slots": [
+            "weapon"
+          ]
+        },
+        {
+          "op": "loseBackpack"
+        }
+      ]
+    },
+    "175": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "camouflage"
+          }
+        }
+      }
     },
     "176": {},
     "177": {},
@@ -1785,14 +2102,15 @@
       "effects": [
         {
           "op": "pickup",
-          "gold": 6
-        },
-        {
-          "op": "hook",
-          "name": "s291_chooseWeaponPickup"
+          "items": [
+            "spear",
+            "dagger"
+          ],
+          "gold": 6,
+          "maxItems": 1
         }
       ],
-      "note": "Only one weapon may be taken, chosen from spear and dagger, independently of the Gold. Pending pickup.maxItems proposal on board #73, 1425; an unrestricted two-item offer would be incorrect."
+      "note": "The gold plus at most one weapon, Spear or Dagger (pickup maxItems; board #73, 1425)."
     },
     "292": {},
     "293": {},
@@ -1927,11 +2245,11 @@
           ]
         },
         {
-          "op": "hook",
-          "name": "s307_exchangeWeapon"
+          "op": "tradeWeapon",
+          "item": "warhammer"
         }
       ],
-      "note": "The Meal is an independent pickup. Warhammer requires surrendering exactly one carried weapon; no free grant. Pending atomic optional tradeWeapon proposal on board #73, 1425."
+      "note": "The Meal is independent; the Warhammer only in exchange for one carried weapon (tradeWeapon; board #73, 1425)."
     },
     "308": {
       "effects": [

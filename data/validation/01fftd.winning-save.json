@@ -1,0 +1,303 @@
+{
+  "actions": [
+    {
+      "type": "rollStats"
+    },
+    {
+      "discipline": "healing",
+      "type": "learn"
+    },
+    {
+      "discipline": "weaponskill",
+      "type": "learn"
+    },
+    {
+      "discipline": "hunting",
+      "type": "learn"
+    },
+    {
+      "discipline": "mindshield",
+      "type": "learn"
+    },
+    {
+      "discipline": "camouflage",
+      "type": "learn"
+    },
+    {
+      "type": "rollWeaponskill"
+    },
+    {
+      "type": "rollEquipment"
+    },
+    {
+      "ordinal": 3,
+      "type": "choose"
+    },
+    {
+      "type": "roll"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 3,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "item": "torch",
+      "type": "take"
+    },
+    {
+      "item": "tinderbox",
+      "type": "take"
+    },
+    {
+      "item": "torch",
+      "type": "take"
+    },
+    {
+      "item": "torch",
+      "type": "take"
+    },
+    {
+      "item": "torch",
+      "type": "take"
+    },
+    {
+      "item": "torch",
+      "type": "take"
+    },
+    {
+      "item": "torch",
+      "type": "take"
+    },
+    {
+      "type": "continue"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "type": "takeGold"
+    },
+    {
+      "type": "continue"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "type": "fight"
+    },
+    {
+      "type": "fight"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "type": "takeGold"
+    },
+    {
+      "type": "continue"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 3,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "type": "roll"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "type": "roll"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 2,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "type": "takeBackpack"
+    },
+    {
+      "item": "meal",
+      "type": "take"
+    },
+    {
+      "item": "dagger",
+      "type": "take"
+    },
+    {
+      "item": "meal",
+      "type": "take"
+    },
+    {
+      "type": "continue"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    },
+    {
+      "ordinal": 1,
+      "type": "choose"
+    }
+  ],
+  "book": "01fftd",
+  "engine": 6,
+  "rulesFingerprint": "edcaee82942464ff",
+  "seed": 36,
+  "sourceSha256": "bbcd7d2a6a52000acb37fede0e11cf4e499e495d91b94630f8b4e10667950615",
+  "version": 1
+}

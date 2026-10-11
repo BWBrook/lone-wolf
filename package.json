@@ -10,7 +10,8 @@
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.engine.json --noEmit",
     "import": "tsx src/importer/cli.ts",
-    "check:graph": "tsx src/importer/cli.ts check"
+    "check:graph": "tsx src/importer/cli.ts check",
+    "validate:book": "node --import tsx src/validation/cli.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",

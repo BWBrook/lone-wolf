@@ -1,0 +1,1580 @@
+{
+  "book": "01fftd",
+  "character": {
+    "backpack": [
+      "meal",
+      "meal"
+    ],
+    "baseEndurance": 23,
+    "combatSkill": 19,
+    "completedBook": "01fftd",
+    "disciplines": [
+      "healing",
+      "weaponskill",
+      "hunting",
+      "mindshield",
+      "camouflage"
+    ],
+    "gold": 32,
+    "hasBackpack": true,
+    "specialItems": [
+      "mapOfSommerlund"
+    ],
+    "version": 2,
+    "weapons": [
+      "dagger"
+    ],
+    "weaponskill": "shortSword"
+  },
+  "engine": 6,
+  "finalStateSha256": "927ce30e02aade77f166578cccf0d0667badf2f509f2f0e7c8585e009c198dc4",
+  "formatVersion": 1,
+  "policySeed": 1831565777,
+  "rulesFingerprint": "edcaee82942464ff",
+  "sections": [
+    1,
+    275,
+    345,
+    19,
+    119,
+    38,
+    347,
+    103,
+    287,
+    330,
+    315,
+    213,
+    331,
+    280,
+    170,
+    319,
+    157,
+    167,
+    264,
+    6,
+    183,
+    200,
+    168,
+    64,
+    16,
+    192,
+    120,
+    84,
+    188,
+    303,
+    237,
+    265,
+    142,
+    135,
+    223,
+    175,
+    182,
+    174,
+    190,
+    20,
+    273,
+    179,
+    318,
+    129,
+    3,
+    196,
+    332,
+    350
+  ],
+  "seed": 36,
+  "sourceSha256": "bbcd7d2a6a52000acb37fede0e11cf4e499e495d91b94630f8b4e10667950615",
+  "steps": [
+    {
+      "action": {
+        "type": "rollStats"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "purpose": "combatSkill",
+          "type": "rolled",
+          "value": 9
+        },
+        {
+          "purpose": "endurance",
+          "type": "rolled",
+          "value": 3
+        }
+      ],
+      "fatigue": 0,
+      "gold": 0,
+      "phase": "disciplines",
+      "section": null,
+      "stateSha256": "0a42998431346818efd2bedbb7865fa1a6f27275bf95a6ed72212691bf3d8bb8"
+    },
+    {
+      "action": {
+        "discipline": "healing",
+        "type": "learn"
+      },
+      "endurance": 23,
+      "events": [],
+      "fatigue": 0,
+      "gold": 0,
+      "phase": "disciplines",
+      "section": null,
+      "stateSha256": "ae11ffb4cc30baefb0b11c61b9eb57dd4d86b5e19614571cb095d2479e24d141"
+    },
+    {
+      "action": {
+        "discipline": "weaponskill",
+        "type": "learn"
+      },
+      "endurance": 23,
+      "events": [],
+      "fatigue": 0,
+      "gold": 0,
+      "phase": "disciplines",
+      "section": null,
+      "stateSha256": "3a9b77827556c754a265842c0ebd573f2ffec60781c1bee8b6fe91f21620e867"
+    },
+    {
+      "action": {
+        "discipline": "hunting",
+        "type": "learn"
+      },
+      "endurance": 23,
+      "events": [],
+      "fatigue": 0,
+      "gold": 0,
+      "phase": "disciplines",
+      "section": null,
+      "stateSha256": "2ea0defd7a89b544500870b69695f3bc0b3f6acac24de12f917e27d6909275b0"
+    },
+    {
+      "action": {
+        "discipline": "mindshield",
+        "type": "learn"
+      },
+      "endurance": 23,
+      "events": [],
+      "fatigue": 0,
+      "gold": 0,
+      "phase": "disciplines",
+      "section": null,
+      "stateSha256": "96ab921b07a652b3d917e8e83f1118f79d27dfc5fb2120fdc2cb990525e1feb8"
+    },
+    {
+      "action": {
+        "discipline": "camouflage",
+        "type": "learn"
+      },
+      "endurance": 23,
+      "events": [],
+      "fatigue": 0,
+      "gold": 0,
+      "phase": "weaponskill",
+      "section": null,
+      "stateSha256": "1057c5445eea6b5e4f7c1cf0e18344562b5110905a2d693cde1a5d37fe41f987"
+    },
+    {
+      "action": {
+        "type": "rollWeaponskill"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "purpose": "weaponskill",
+          "type": "rolled",
+          "value": 3
+        }
+      ],
+      "fatigue": 0,
+      "gold": 0,
+      "phase": "equipment",
+      "section": null,
+      "stateSha256": "8183e706263235fbb1fb38122c5db0bd990dd6cfea32d64b58842ae88cdda215"
+    },
+    {
+      "action": {
+        "type": "rollEquipment"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "purpose": "gold",
+          "type": "rolled",
+          "value": 6
+        },
+        {
+          "delta": 6,
+          "gold": 6,
+          "type": "gold"
+        },
+        {
+          "item": "axe",
+          "type": "itemGained"
+        },
+        {
+          "item": "meal",
+          "type": "itemGained"
+        },
+        {
+          "item": "mapOfSommerlund",
+          "type": "itemGained"
+        },
+        {
+          "purpose": "equipment",
+          "type": "rolled",
+          "value": 1
+        },
+        {
+          "item": "sword",
+          "type": "itemGained"
+        },
+        {
+          "number": 1,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 1,
+      "stateSha256": "5317ec802eb4f5c3862a640ed1840b536e1a500a8bfe986f28af13de7e818903"
+    },
+    {
+      "action": {
+        "ordinal": 3,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 275,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 275,
+      "stateSha256": "be7bfd2060443bc551122bddcaf63fcded0fd9623f87132c64aa20b09d205bdd"
+    },
+    {
+      "action": {
+        "type": "roll"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "purpose": "section",
+          "total": 3,
+          "type": "rolled",
+          "value": 3
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 275,
+      "stateSha256": "d1265ae1bb68445d50fcd698ef87e33db15344b123c78674aa9e3845ebc54085"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 345,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 345,
+      "stateSha256": "1dd9a3a5857e57cb4c15182530ddb33f0919a67d3e81a7ad541d62d31f8ee314"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 19,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 19,
+      "stateSha256": "3947add3f2249b565100f6ec24534892fc63af9e9cd95428a615d5ad187735ec"
+    },
+    {
+      "action": {
+        "ordinal": 3,
+        "type": "choose"
+      },
+      "endurance": 21,
+      "events": [
+        {
+          "number": 119,
+          "type": "section"
+        },
+        {
+          "cause": "effect",
+          "delta": -2,
+          "endurance": 21,
+          "type": "endurance"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 119,
+      "stateSha256": "510f1aa0d7e0141c855a1ffa9d3392774ed7e76f851900e4b4828d88ce27f7b9"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 22,
+      "events": [
+        {
+          "cause": "healing",
+          "delta": 1,
+          "endurance": 22,
+          "type": "endurance"
+        },
+        {
+          "number": 38,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 38,
+      "stateSha256": "2f4fdb3fcca7f91eef03889b40420b891e3b111e23ca9be2ca7fdb5862b73ddd"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "cause": "healing",
+          "delta": 1,
+          "endurance": 23,
+          "type": "endurance"
+        },
+        {
+          "number": 347,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 347,
+      "stateSha256": "58a9ae4675e283ba3d33059013dc2648c522f282e55d8fa10636ca5818b7005b"
+    },
+    {
+      "action": {
+        "item": "torch",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "torch",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 347,
+      "stateSha256": "2fbb59ddabe274fdb448d1838049f3600721cf0b7067c992acc164c54245aaca"
+    },
+    {
+      "action": {
+        "item": "tinderbox",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "tinderbox",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 347,
+      "stateSha256": "f2b5f4e09ef1f24211d3894db133a265e6ff22981f2867c8ee43557f8a28ac66"
+    },
+    {
+      "action": {
+        "item": "torch",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "torch",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 347,
+      "stateSha256": "f6b8d9e4d63cbcc62389001571d58e917b6a8a0507de06083967af91aa4966e1"
+    },
+    {
+      "action": {
+        "item": "torch",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "torch",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 347,
+      "stateSha256": "9a7c8e186c2583b848486e1309182d150bbf5c20182b63aca3a39f60af76fbfb"
+    },
+    {
+      "action": {
+        "item": "torch",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "torch",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 347,
+      "stateSha256": "718007883f0d8f6bb6327e0df413a049ee97639c564a60aa9733c82962fe8338"
+    },
+    {
+      "action": {
+        "item": "torch",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "torch",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 347,
+      "stateSha256": "d840fad01065e8e6f5e3d8e45d76a4a9241ffc1aa38372ede6347bec015ad7c6"
+    },
+    {
+      "action": {
+        "item": "torch",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "torch",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 347,
+      "stateSha256": "2bbfbe26d014d288bcf2a8a278341bbe04d1ee89530ac40fcd3b2aa36d018453"
+    },
+    {
+      "action": {
+        "type": "continue"
+      },
+      "endurance": 23,
+      "events": [],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 347,
+      "stateSha256": "fa584b33d00c6c04ead5e4eebe212345f62c99e35f405c9655e243b5048e46fd"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 103,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 103,
+      "stateSha256": "9dc1b997d86b70e2488e736574cd226e2a1d3cc6dcb56949fd9f04594f1463b0"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 287,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 287,
+      "stateSha256": "e51422e04b63d239298507df4ba471218a72ce59fef160a61478aeee3207ee5d"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 330,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 330,
+      "stateSha256": "1f4726f683bcb1acac1ea335d6557cdfc45a20e14517a8944eb6b0511323e8c7"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 315,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 6,
+      "phase": "section",
+      "section": 315,
+      "stateSha256": "354dd469cb724d9b7cd828f9e7062b2e734385d69e051484d572e1e9794c841f"
+    },
+    {
+      "action": {
+        "type": "takeGold"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "delta": 6,
+          "gold": 12,
+          "type": "gold"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 12,
+      "phase": "section",
+      "section": 315,
+      "stateSha256": "fe2f0510338a3229246d82d976996e7534c3f3602ac70e9efdac0d83f75f359d"
+    },
+    {
+      "action": {
+        "type": "continue"
+      },
+      "endurance": 23,
+      "events": [],
+      "fatigue": 0,
+      "gold": 12,
+      "phase": "section",
+      "section": 315,
+      "stateSha256": "a691ed29bad783130e13bcb30ff7d04930c5c05c2bb6a3bae3c2e53db441a0d2"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 213,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 12,
+      "phase": "section",
+      "section": 213,
+      "stateSha256": "422b0ec513362d076cdd77b73eb3bb5b0b9083a2890e2be6a03cd08ea66a1142"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 331,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 12,
+      "phase": "section",
+      "section": 331,
+      "stateSha256": "85b2aec592e885559c24a019892e33f95d7385121fc04ddfda94101d1a4facc6"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 280,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 12,
+      "phase": "section",
+      "section": 280,
+      "stateSha256": "a96dde1959fae018559eabeefd57b49cffe165f2885c61bddea95bf9a4a324a6"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 170,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 12,
+      "phase": "section",
+      "section": 170,
+      "stateSha256": "4453f7b1eaad21ef833612957151a0bad441f93af1695324248ad39c9671cb9f"
+    },
+    {
+      "action": {
+        "type": "fight"
+      },
+      "endurance": 20,
+      "events": [
+        {
+          "purpose": "combat",
+          "type": "rolled",
+          "value": 3
+        },
+        {
+          "combat": 0,
+          "combatSkill": 19,
+          "enemyEndurance": 1,
+          "enemyLoss": 6,
+          "evading": false,
+          "heroLoss": 3,
+          "ratio": 2,
+          "round": 1,
+          "type": "combatRound"
+        },
+        {
+          "cause": "combat",
+          "delta": -3,
+          "endurance": 20,
+          "type": "endurance"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 12,
+      "phase": "section",
+      "section": 170,
+      "stateSha256": "30a4d76bec8bd9b893dac491079512d8189f3631e603ea4aa9450168b3e9add3"
+    },
+    {
+      "action": {
+        "type": "fight"
+      },
+      "endurance": 20,
+      "events": [
+        {
+          "purpose": "combat",
+          "type": "rolled",
+          "value": 9
+        },
+        {
+          "combat": 0,
+          "combatSkill": 19,
+          "enemyEndurance": 0,
+          "enemyLoss": 12,
+          "evading": false,
+          "heroLoss": 0,
+          "ratio": 2,
+          "round": 2,
+          "type": "combatRound"
+        },
+        {
+          "combat": 0,
+          "rounds": 2,
+          "type": "enemyDefeated"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 12,
+      "phase": "section",
+      "section": 170,
+      "stateSha256": "19d0259dbe0717e32848622fe976bf9f9ac06efc4b6a8e28b78d3157885b1151"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 20,
+      "events": [
+        {
+          "number": 319,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 12,
+      "phase": "section",
+      "section": 319,
+      "stateSha256": "d2aa76b85a7447b798ba2a9aab3d4975f1328f48e8422fc5c767f73b153bc5d9"
+    },
+    {
+      "action": {
+        "type": "takeGold"
+      },
+      "endurance": 20,
+      "events": [
+        {
+          "delta": 20,
+          "gold": 32,
+          "type": "gold"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 319,
+      "stateSha256": "99bca7bccbafea3134a04d35ce9bdcb63ee6094fe1bfa9c5889406e2b2646b2e"
+    },
+    {
+      "action": {
+        "type": "continue"
+      },
+      "endurance": 20,
+      "events": [],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 319,
+      "stateSha256": "784790531ff4310506e3aa6ac01a5dea3450201dfee1ebae14e00de4d063c6cc"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 21,
+      "events": [
+        {
+          "cause": "healing",
+          "delta": 1,
+          "endurance": 21,
+          "type": "endurance"
+        },
+        {
+          "number": 157,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 157,
+      "stateSha256": "3527d8fcf59e7274ae149405ab8301c5ae8575cc3052ec4e6e1eb317bf95824f"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 22,
+      "events": [
+        {
+          "cause": "healing",
+          "delta": 1,
+          "endurance": 22,
+          "type": "endurance"
+        },
+        {
+          "number": 167,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 167,
+      "stateSha256": "bcec479213df325df192d05f1d27fa33cf50c9560403a785ad02952234be07a8"
+    },
+    {
+      "action": {
+        "ordinal": 3,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "cause": "healing",
+          "delta": 1,
+          "endurance": 23,
+          "type": "endurance"
+        },
+        {
+          "number": 264,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 264,
+      "stateSha256": "af09d217b20bd16c3883c71efaf4311f432ada0e58987766543da91d24d6a8df"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 6,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 6,
+      "stateSha256": "f444bb5c492477889d619d20aeaddf5955aef9ce1f36e63312d554e81156ac8e"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 183,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 183,
+      "stateSha256": "3a94cde6807288a9dcc82f1243ba2cdc5c06b10b529f9ce0285b2f2cc4dd939c"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 200,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 200,
+      "stateSha256": "fd049d49bfbef7a06036b67ba7628e19cb73283ec9b2bb3392abcf054854fcba"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 168,
+          "type": "section"
+        },
+        {
+          "outcome": "hunted",
+          "type": "meal"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 168,
+      "stateSha256": "ed366d28b6dd59caa80de695478a9767ed9214b46696e90f045b081b90305387"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 64,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 64,
+      "stateSha256": "921df80e8689336eaa7caeda16c06e7ed505979254e284d66145329d948897f2"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 16,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 16,
+      "stateSha256": "d5c8d361ab74e0884eeaf6918bd04bcdd8f7b64ad520fdc66cb8f6374ca58320"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 192,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 192,
+      "stateSha256": "c0b5e06f6608d2c2bf2a943dbdbe6c8042a65b0162392c7aa0986faa349dc01b"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 120,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 120,
+      "stateSha256": "4fe06aa5944bb0c8db8864e1874ba2f84b126ea04d4b222f9b332f312dcc051c"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 84,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 84,
+      "stateSha256": "7586726eb6f85243c9ea27fc6159dfd45fd84c58587592ddf1c6486c84426982"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 188,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 188,
+      "stateSha256": "5a04cb8ddbb7d29d06d56530bf1d3a3392c38de76950c19c1ef53ef8d42725c7"
+    },
+    {
+      "action": {
+        "type": "roll"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "purpose": "section",
+          "total": 5,
+          "type": "rolled",
+          "value": 5
+        },
+        {
+          "item": "meal",
+          "type": "itemLost"
+        },
+        {
+          "item": "torch",
+          "type": "itemLost"
+        },
+        {
+          "item": "tinderbox",
+          "type": "itemLost"
+        },
+        {
+          "item": "torch",
+          "type": "itemLost"
+        },
+        {
+          "item": "torch",
+          "type": "itemLost"
+        },
+        {
+          "item": "torch",
+          "type": "itemLost"
+        },
+        {
+          "item": "torch",
+          "type": "itemLost"
+        },
+        {
+          "item": "torch",
+          "type": "itemLost"
+        },
+        {
+          "type": "backpackLost"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 188,
+      "stateSha256": "584dfdb8c57c16c0d75d948dd398ebaab9d77b1651cd84e604e01e5e83123eec"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 303,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 303,
+      "stateSha256": "cba3cec91c174728a9d78edd45b28b3b789cb57e3dcf4aa47350b4cffa5ebc30"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 237,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 237,
+      "stateSha256": "d4adcf1552609a160b556f05ef7c186b7493051ea9f600808329f85e55088cb5"
+    },
+    {
+      "action": {
+        "type": "roll"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "purpose": "section",
+          "total": 4,
+          "type": "rolled",
+          "value": 4
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 237,
+      "stateSha256": "acbef040216ecafa062685eed7a4dfc6c7674aac420daa218e84d1f7b1aa943f"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 265,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 265,
+      "stateSha256": "7ff39bba5a1fb4580eb5940ffe1efbcf79666574d4a4eeda076c4a8ec0a5324a"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 142,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 142,
+      "stateSha256": "18117323fd051d7c5566b9b5029414c6c389f02980a6e73cb8d0b393b4499316"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 135,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 135,
+      "stateSha256": "9791f3b3ba98f5965bf42503c6e2617a180a596b8615db33ac99c7b5face9635"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 223,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 223,
+      "stateSha256": "cea2f3ce679a5ffa1902d4139755198197f27c2032472799612b9f13cefcf9a4"
+    },
+    {
+      "action": {
+        "ordinal": 2,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 175,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 175,
+      "stateSha256": "9071ad7c89d09029ae20a866aed3b6317070c1fa322b65f5ceb1fdc6972cea3b"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 182,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 182,
+      "stateSha256": "36660e6b771c1e4f0812890623c27c45f467e7487a03f918784f9bedc96d8409"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 174,
+          "type": "section"
+        },
+        {
+          "item": "axe",
+          "type": "itemLost"
+        },
+        {
+          "item": "sword",
+          "type": "itemLost"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 174,
+      "stateSha256": "a7dca2cf98bb378a81ef8716634e04749a63ca3df9674138472485557beb487a"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 190,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 190,
+      "stateSha256": "a0f862d96f8bffc462c1e8bf064237ba749e23f6f35ed7c1b2c42c90e6bafb33"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 20,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 20,
+      "stateSha256": "ef66ed607e98f6d249b4e5fbe6ab543f44680b9d07a0b27d31dcec43dc4a7804"
+    },
+    {
+      "action": {
+        "type": "takeBackpack"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "type": "backpackGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 20,
+      "stateSha256": "06eafa686edcfcaf2053a395c7597aeacea49d090ed9aa98ef12ca40c48643bc"
+    },
+    {
+      "action": {
+        "item": "meal",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "meal",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 20,
+      "stateSha256": "bc848df24546ee1737af5f4e4aa525599f35a7b522b3ecf46e87b8063b46b596"
+    },
+    {
+      "action": {
+        "item": "dagger",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "dagger",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 20,
+      "stateSha256": "de8e4f2c16e57ac797486ab059c9963bd643417b03e09b42cb0fa902b88991c1"
+    },
+    {
+      "action": {
+        "item": "meal",
+        "type": "take"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "item": "meal",
+          "type": "itemGained"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 20,
+      "stateSha256": "c3d8e7506b60f4df27badb92323bd1c09c71764f60f3efadad173963b23d8f51"
+    },
+    {
+      "action": {
+        "type": "continue"
+      },
+      "endurance": 23,
+      "events": [],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 20,
+      "stateSha256": "0f9eadc08f073c2fc2021a276aa5f63cf9ee4da2121812ef3443b12ecec3b5db"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 273,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 273,
+      "stateSha256": "545e391b2834de7852e5b96fce3ffdceb75dd7d402577405d02db5e0655f2fbc"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 179,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 179,
+      "stateSha256": "9592dec8e4699e208b9d3c4885e00c4fe7aa958000a7b8a4d4b587a8cff69d8d"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 318,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 318,
+      "stateSha256": "fff395deee8b827f2d0cc3dbe9069cfeea439b987d6bf9d773f846c14ffc2905"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 129,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 129,
+      "stateSha256": "7cde02fb5e813ea366302ec9bdbcdcf5066224ddf06ab44807a57832bc395406"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 3,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 3,
+      "stateSha256": "51d092030665ed7e8918ed05cc2d41d9120e56e864381c8a5344a4772dac44c2"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 196,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 196,
+      "stateSha256": "85cef79d0c192812e278bd12f5cddf490ca43010d097660146472f8b757497f2"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 332,
+          "type": "section"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "section",
+      "section": 332,
+      "stateSha256": "73bf4fbbe71848f18759f0c23c1504a61aeb991c888f64ce0e314693a5cd225e"
+    },
+    {
+      "action": {
+        "ordinal": 1,
+        "type": "choose"
+      },
+      "endurance": 23,
+      "events": [
+        {
+          "number": 350,
+          "type": "section"
+        },
+        {
+          "type": "won"
+        }
+      ],
+      "fatigue": 0,
+      "gold": 32,
+      "phase": "won",
+      "section": 350,
+      "stateSha256": "927ce30e02aade77f166578cccf0d0667badf2f509f2f0e7c8585e009c198dc4"
+    }
+  ]
+}

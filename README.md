@@ -3,9 +3,10 @@
 An open-source, browser-first computer RPG presentation of Joe Dever's *Lone Wolf*
 gamebooks, starting with Book 1, *Flight from the Dark*.
 
-Layer 1 is in development. The plain browser player runs a synthetic demo. Book 1
-can be imported locally and checked against its section graph; the real-book
-player adapter and complete rules encoding are still to come.
+The rules core, importer and plain browser player support all 350 sections of
+Book 1. Automated complete-game checks and browser save/export checks pass.
+Layer 1 still awaits independent review of the playthrough harness and Barry's
+human playtest before work moves to the Phaser presentation.
 
 ## Local development
 
@@ -24,7 +25,7 @@ an HTTP(S) download URL, or its extracted `01fftd.htm`):
 
 ```sh
 npm run import -- /path/to/01fftd.zip
-npm run import -- /path/to/01fftd.zip --svg /path/to/01fftd.svgz
+npm run import -- /path/to/01fftd.zip --svg /path/to/01fftd.svgz --rules data/mechanics/01fftd.json
 npm run check:graph -- content/01fftd/book.json --svg /path/to/01fftd.svgz
 ```
 
@@ -47,8 +48,44 @@ are read in memory, and no artwork is downloaded. The generated JSON contains
 plain text, never executable source markup. Original appendices and notices remain
 in `source.htm`; the plain player does not reproduce their complex layout.
 
-Permanent tests use synthetic content exclusively. Keep all personally downloaded
-book content and generated files in `content/`; they must never be committed.
+Open the development server with `?book=01fftd` to play the imported book, or
+`?book=01fftd&reader` to read it without applying rules. The default address opens
+the synthetic demo. The player saves locally after each action; **Download save**
+and **Load save** let you move that action log between sessions. A completed game
+offers **Export character** for a later book. Saves use engine version 6 and
+character exports use format version 2. Loading refuses a different engine,
+source edition or rules fingerprint.
+
+Permanent tests use synthetic content exclusively. Keep personally downloaded
+book content, importer output and screenshots in `content/`; they must never be
+committed. Content-free rules, native saves and structural validation traces may
+be committed.
+
+## Complete-game validation
+
+After importing Book 1, run:
+
+```sh
+npm run validate:book -- --svg /path/to/01fftd.svgz
+```
+
+The harness checks the original source hash, freshly rebuilds `book.json`, loads
+the complete rules and compares all 556 graph edges with Project Aon's SVG. If
+the matching import receipt already contains a successful SVG comparison,
+`--svg` may be omitted. Output defaults to ignored `content/validation/01fftd/`.
+
+Every game starts at character creation and uses legal actions with separate
+seeded engine and policy RNGs. It checks character invariants after every action
+and replays each serialized save to the exact final state. Directed games cover
+sections missed by random play, and each recorded coverage witness is rerun.
+
+The committed [validation artifacts](data/validation/README.md) record 5,000
+random games (351 wins), plus 4,516 directed games: all 350 sections were reached
+from a new game. The seed-36 winning save has 77 actions and can be loaded into
+the player. Section coverage does not establish exhaustive branch coverage, and
+the 7.02% random-policy win rate is not a human difficulty estimate. The artifacts
+contain IDs, numbers and engine events only, with hashes tying them to the tested
+source, rules, engine and harness.
 
 ## Book content is not included
 

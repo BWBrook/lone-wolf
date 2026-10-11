@@ -174,13 +174,23 @@ function story(v: View, can: (a: Action) => boolean, button: Button) {
   const def = book.engine.sections[n]!;
   if (pending.kind === 'pickup') {
     body.push(
-      h('h3', {}, 'You may take'),
+      h('h3', {}, pending.remaining === null ? 'You may take' : `You may take ${pending.remaining} more`),
       h(
         'div',
         { class: 'choices' },
         [...new Set(pending.offered)].map((item) => button(`Take ${humanize(item)}`, { type: 'take', item })),
         pending.gold > 0 && button(`Take ${pending.gold} Gold Crowns`, { type: 'takeGold' }),
         pending.backpack && can({ type: 'takeBackpack' }) && button('Take the Backpack', { type: 'takeBackpack' }),
+      ),
+      button('Continue', { type: 'continue' }, 'primary'),
+    );
+  } else if (pending.kind === 'trade') {
+    body.push(
+      h('h3', {}, `You may exchange a Weapon for the ${humanize(pending.item)}`),
+      h(
+        'div',
+        { class: 'choices' },
+        [...new Set(state.character.weapons)].map((item) => button(`Give up the ${humanize(item)}`, { type: 'tradeWeapon', item })),
       ),
       button('Continue', { type: 'continue' }, 'primary'),
     );
@@ -294,6 +304,8 @@ function describe(v: View, e: GameEvent): string | null {
       return 'Your Backpack is gone, with everything in it.';
     case 'backpackGained':
       return 'You have a Backpack again.';
+    case 'traded':
+      return `You give up the ${humanize(e.gave)} for the ${humanize(e.received)}.`;
     case 'combatSkill':
       return `${signed(e.delta)} COMBAT SKILL, now ${e.combatSkill}.`;
     case 'combatEnded':

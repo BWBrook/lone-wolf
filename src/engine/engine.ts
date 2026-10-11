@@ -142,9 +142,14 @@ function sectionActions(book: EngineBook, s: GameState): Action[] {
   }
   if (pending.kind === 'meal') return pending.options.map((item) => ({ type: 'eat', item }));
   if (pending.kind === 'loseOne') return pending.options.map((item) => ({ type: 'loseItem', item }));
+  if (pending.kind === 'trade') {
+    return [...unique(c.weapons).map((item): Action => ({ type: 'tradeWeapon', item })), { type: 'continue' }];
+  }
   const actions: Action[] = [];
   if (pending.kind === 'pickup') {
-    for (const item of unique(pending.offered)) if (hasRoom(book, c, item)) actions.push({ type: 'take', item });
+    if (pending.remaining !== 0) {
+      for (const item of unique(pending.offered)) if (hasRoom(book, c, item)) actions.push({ type: 'take', item });
+    }
     if (pending.gold > 0) actions.push({ type: 'takeGold' });
     if (pending.backpack && !c.hasBackpack) actions.push({ type: 'takeBackpack' });
     actions.push({ type: 'continue' });
@@ -213,9 +218,18 @@ export function apply(book: EngineBook, state: GameState, action: Action): { sta
       break;
     }
     case 'take': {
-      const pending = s.section!.pending as { offered: ItemId[] };
+      const pending = s.section!.pending as { offered: ItemId[]; remaining: number | null };
       pending.offered.splice(pending.offered.indexOf(action.item), 1);
+      if (pending.remaining !== null) pending.remaining--;
       gain(book, c, ev, action.item);
+      break;
+    }
+    case 'tradeWeapon': {
+      const received = (s.section!.pending as { item: ItemId }).item;
+      lose(book, s, ev, action.item);
+      gain(book, c, ev, received);
+      ev.push({ type: 'traded', gave: action.item, received });
+      finishEffect(s);
       break;
     }
     case 'takeGold': {
@@ -317,7 +331,13 @@ function advance(book: EngineBook, s: GameState, ev: GameEvent[]): void {
         if (startMeal(book, s, ev, e.hunting !== false)) sec.effect++;
         break;
       case 'pickup':
-        sec.pending = { kind: 'pickup', offered: [...(e.items ?? [])], gold: e.gold ?? 0, backpack: e.backpack === true };
+        sec.pending = {
+          kind: 'pickup',
+          offered: [...(e.items ?? [])],
+          gold: e.gold ?? 0,
+          backpack: e.backpack === true,
+          remaining: e.maxItems ?? null,
+        };
         break;
       case 'combat':
         sec.pending = { kind: 'combat', enemyEndurance: def.combats[e.combat]!.endurance, rounds: 0 };
@@ -349,6 +369,9 @@ function advance(book: EngineBook, s: GameState, ev: GameEvent[]): void {
           ev.push({ type: 'backpackLost' });
         }
         sec.effect++;
+        break;
+      case 'tradeWeapon':
+        sec.pending = { kind: 'trade', item: e.item };
         break;
       case 'loseOne': {
         const kinds = unique(slotItems(s.character, e.from));

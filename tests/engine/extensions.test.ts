@@ -46,6 +46,8 @@ const imported = {
     plain(71, c(1, 99)),
     plain(72, c(1, 99), c(2, 99)),
     fight(73, 15, 1000, c(1, 99)),
+    plain(74, c(1, 99)),
+    plain(75, c(1, 99)),
     plain(99),
   ],
 };
@@ -56,6 +58,8 @@ const rules = {
   items: {
     axe: { slot: 'weapon', weapon: 'axe' },
     sword: { slot: 'weapon', weapon: 'sword' },
+    dagger: { slot: 'weapon', weapon: 'dagger' },
+    warhammer: { slot: 'weapon', weapon: 'warhammer' },
     meal: { slot: 'backpack', meal: true },
     laumspur: { slot: 'backpack', meal: true, use: { endurance: 3 } },
     potion: { slot: 'backpack', use: { endurance: 4, notBeforeCombat: true } },
@@ -99,6 +103,10 @@ const rules = {
     '33': { effects: [{ op: 'combat', combat: 0, maxRounds: 1, timeout: { choice: 2 }, onHeroLoss: { choice: 3 } }] },
     '34': { effects: [{ op: 'combat', combat: 0, maxRounds: 4, timeout: { choice: 2 } }] },
     '70': { effects: [{ op: 'pickup', items: ['meal', 'meal', 'sword'], backpack: true }] },
+    // The 291 pattern: the gold, plus at most one of the weapons.
+    '74': { effects: [{ op: 'pickup', items: ['sword', 'dagger'], gold: 6, maxItems: 1 }] },
+    // The 307 pattern: a Meal, then a Warhammer only in exchange for a carried weapon.
+    '75': { effects: [{ op: 'pickup', items: ['meal'] }, { op: 'tradeWeapon', item: 'warhammer' }] },
     '71': { effects: [{ op: 'loseOne', from: 'weapon' }] },
     '72': { choices: { '1': { when: { inventory: { slot: 'backpack', min: 1 } } } } },
     // The 283 pattern: +2 for the first round only, then -2 without Mindshield.
@@ -422,6 +430,47 @@ describe('losing one item of the player\'s choice (the section 277 pattern)', ()
   });
 });
 
+describe('a limited pickup (the section 291 pattern)', () => {
+  it('allows one weapon, either one, with the gold taken independently', () => {
+    const s = at(74, { weapons: [], gold: 0 });
+    const withGold = act(s, { type: 'takeGold' }).state;
+    expect(availableActions(book, withGold)).toContainEqual({ type: 'take', item: 'dagger' });
+    for (const item of ['sword', 'dagger']) {
+      const took = act(withGold, { type: 'take', item }).state;
+      expect(took.character).toMatchObject({ weapons: [item], gold: 6 });
+      const next = availableActions(book, took);
+      expect(next.some((a) => a.type === 'take')).toBe(false);
+      const dropped = act(took, { type: 'drop', item }).state;
+      expect(availableActions(book, dropped).some((a) => a.type === 'take')).toBe(false);
+    }
+    expect(act(s, { type: 'continue' }).state.character).toMatchObject({ weapons: [], gold: 0 });
+  });
+});
+
+describe('a weapon exchange (the section 307 pattern)', () => {
+  const toTrade = (o: Partial<Character>) => act(at(75, o), { type: 'continue' }).state;
+  it('swaps one carried weapon, chosen by the player, for the offered one, once', () => {
+    const s = toTrade({ weapons: ['axe', 'sword'] });
+    expect(availableActions(book, s)).toEqual([
+      { type: 'tradeWeapon', item: 'axe' },
+      { type: 'tradeWeapon', item: 'sword' },
+      { type: 'continue' },
+    ]);
+    const { state, events } = act(s, { type: 'tradeWeapon', item: 'sword' });
+    expect(state.character.weapons).toEqual(['axe', 'warhammer']);
+    expect(events).toContainEqual({ type: 'traded', gave: 'sword', received: 'warhammer' });
+    expect(state.section!.pending).toEqual({ kind: 'choose' });
+    expect(toTrade({ weapons: ['axe'] }).character.weapons).toEqual(['axe']);
+    expect(act(toTrade({ weapons: ['axe'] }), { type: 'tradeWeapon', item: 'axe' }).state.character.weapons).toEqual(['warhammer']);
+  });
+
+  it('offers only Continue to someone with no weapon, and never a free Warhammer', () => {
+    const s = toTrade({ weapons: [] });
+    expect(availableActions(book, s)).toEqual([{ type: 'continue' }]);
+    expect(act(s, { type: 'continue' }).state.character.weapons).toEqual([]);
+  });
+});
+
 describe('inventory conditions (the section 247 pattern)', () => {
   it('count carried copies in a slot, and nothing for a lost Backpack', () => {
     expect(availableChoices(book, at(72, { backpack: [] }))).toEqual([2]);
@@ -496,7 +545,7 @@ describe('saves and validation', () => {
         x = (Math.imul(x ^ (x >>> 15), 0x2c1b3c6d) + 0x9e3779b9) | 0;
         return xs[(x >>> 0) % xs.length]!;
       };
-      const start = [20, 23, 24, 25, 26, 27, 28, 29, 32, 33, 34, 70, 71, 72][seed % 14]!;
+      const start = [20, 23, 24, 25, 26, 27, 28, 29, 32, 33, 34, 70, 71, 72, 74, 75][seed % 16]!;
       const hasBackpack = seed % 3 > 0;
       const kit = { backpack: hasBackpack ? ['meal', 'laumspur', 'potion', 'rope'] : [], weapons: ['axe', 'sword'], endurance: 15, hasBackpack };
       let s = at(start, kit, seed);
@@ -529,6 +578,8 @@ describe('saves and validation', () => {
     ['a round limit without a timeout', (r: any) => delete r.sections['28'].effects[0].timeout, /maxRounds and timeout/],
     ['a pickup offering nothing', (r: any) => (r.sections['26'].effects[0] = { op: 'pickup' }), /at least one item, some gold or a Backpack/],
     ['a draw index of 0', (r: any) => (r.sections['20'].choices['1'].when.random.draw = 0), /draw|too small/i],
+    ['a trade for something other than a weapon', (r: any) => (r.sections['75'].effects[1].item = 'meal'), /meal is not a weapon/],
+    ['a zero item limit', (r: any) => (r.sections['74'].effects[0].maxItems = 0), /too small|maxItems/i],
   ])('rejects %s', (_, patch, message) => {
     const r = JSON.parse(JSON.stringify(rules));
     patch(r);

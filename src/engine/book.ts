@@ -55,6 +55,10 @@ export function buildEngineBook(
   const effect = (where: string, e: Effect, section: EngineSection) => {
     if ('when' in e && e.when) condition(where, e.when);
     if (e.op === 'pickup' || e.op === 'lose') e.items?.forEach((id) => item(where, id));
+    if (e.op === 'tradeWeapon') {
+      item(where, e.item);
+      if (has(rules.items, e.item) && rules.items[e.item]!.slot !== 'weapon') problems.push(`${where}: ${e.item} is not a weapon`);
+    }
     if (e.op === 'combat') {
       if (!section.combats[e.combat]) problems.push(`${where}: no combat ${e.combat}`);
       for (const [label, ref] of [['evade', e.evade], ['onHeroLoss', e.onHeroLoss], ['timeout', e.timeout]] as const) {

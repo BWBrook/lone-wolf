@@ -132,6 +132,8 @@ export const Effect = z.discriminatedUnion('op', [
       items: z.array(ItemId).optional(),
       gold: int.positive().optional(),
       backpack: z.literal(true).optional(),
+      // At most this many item copies may be taken from this offer (gold is separate).
+      maxItems: int.positive().optional(),
       ...when,
     })
     .refine(
@@ -151,6 +153,8 @@ export const Effect = z.discriminatedUnion('op', [
   z.strictObject({ op: z.literal('loseAll'), slots: z.array(Slot).min(1), ...when }),
   // Loses the Backpack itself and everything in it.
   z.strictObject({ op: z.literal('loseBackpack'), ...when }),
+  // Optionally give up one carried weapon (the player's choice) to receive `item`.
+  z.strictObject({ op: z.literal('tradeWeapon'), item: ItemId, ...when }),
   // One carried copy chosen by the player (automatic when only one kind is carried).
   z.strictObject({ op: z.literal('loseOne'), from: Slot, ...when }),
   // One carried copy, drawn at random, from `from`, else from `fallback`.

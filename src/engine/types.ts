@@ -53,7 +53,8 @@ export interface Character {
 }
 
 export type Pending =
-  | { kind: 'pickup'; offered: ItemId[]; gold: number; backpack: boolean }
+  | { kind: 'pickup'; offered: ItemId[]; gold: number; backpack: boolean; remaining: number | null }
+  | { kind: 'trade'; item: ItemId }
   | { kind: 'loseOne'; options: ItemId[] }
   | { kind: 'meal'; options: ItemId[] }
   | { kind: 'combat'; enemyEndurance: number; rounds: number }
@@ -95,6 +96,7 @@ export type Action =
   | { type: 'takeGold' }
   | { type: 'takeBackpack' }
   | { type: 'loseItem'; item: ItemId }
+  | { type: 'tradeWeapon'; item: ItemId }
   | { type: 'eat'; item: ItemId }
   | { type: 'continue' }
   | { type: 'roll' }
@@ -128,6 +130,7 @@ export type GameEvent =
   | { type: 'stolen'; item: ItemId }
   | { type: 'backpackLost' }
   | { type: 'backpackGained' }
+  | { type: 'traded'; gave: ItemId; received: ItemId }
   | { type: 'combatSkill'; delta: number; combatSkill: number }
   | { type: 'combatEnded'; combat: number; reason: 'heroLoss' | 'timeout'; to: number }
   | { type: 'died'; cause: 'endurance' | 'deadEnd' | 'effect' }

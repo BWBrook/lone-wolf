@@ -83,6 +83,13 @@
     },
     "message": {
       "slot": "backpack"
+    },
+    "warhammer": {
+      "slot": "weapon",
+      "weapon": "warhammer"
+    },
+    "perfumedSoap": {
+      "slot": "backpack"
     }
   },
   "setup": {
@@ -1763,6 +1770,32 @@
     "286": {},
     "287": {},
     "288": {},
+    "289": {},
+    "290": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "quarterstaff"
+          ]
+        }
+      ]
+    },
+    "291": {
+      "effects": [
+        {
+          "op": "pickup",
+          "gold": 6
+        },
+        {
+          "op": "hook",
+          "name": "s291_chooseWeaponPickup"
+        }
+      ],
+      "note": "Only one weapon may be taken, chosen from spear and dagger, independently of the Gold. Pending pickup.maxItems proposal on board #73, 1425; an unrestricted two-item offer would be incorrect."
+    },
+    "292": {},
+    "293": {},
     "294": {
       "effects": [
         {
@@ -1805,7 +1838,226 @@
         }
       }
     },
+    "295": {},
+    "296": {},
+    "297": {},
+    "298": {},
+    "299": {},
+    "300": {
+      "effects": [
+        {
+          "op": "meal"
+        }
+      ]
+    },
+    "301": {},
+    "302": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 2
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 3,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "303": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "camouflage"
+          }
+        },
+        "2": {
+          "when": {
+            "not": {
+              "discipline": "camouflage"
+            }
+          }
+        }
+      }
+    },
+    "304": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -2
+        },
+        {
+          "op": "pickup",
+          "items": [
+            "vordakGem"
+          ]
+        }
+      ],
+      "note": "The two-point wound applies before the optional Gem pickup, matching 76."
+    },
+    "305": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "spear"
+          ]
+        }
+      ]
+    },
     "306": {},
+    "307": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "meal"
+          ]
+        },
+        {
+          "op": "hook",
+          "name": "s307_exchangeWeapon"
+        }
+      ],
+      "note": "The Meal is an independent pickup. Warhammer requires surrendering exactly one carried weapon; no free grant. Pending atomic optional tradeWeapon proposal on board #73, 1425."
+    },
+    "308": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -1
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "animalKinship"
+          }
+        }
+      }
+    },
+    "309": {},
+    "310": {},
+    "311": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "camouflage"
+          }
+        }
+      }
+    },
+    "312": {},
+    "313": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -1
+        }
+      ]
+    },
+    "314": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 6
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 7,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "315": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "perfumedSoap"
+          ],
+          "gold": 6
+        }
+      ]
+    },
+    "316": {
+      "note": "No numeric loss is specified."
+    },
+    "317": {},
+    "318": {},
+    "319": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "dagger"
+          ],
+          "gold": 20
+        }
+      ]
+    },
+    "320": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -2
+        }
+      ]
+    },
+    "321": {},
+    "322": {},
+    "323": {},
+    "324": {},
+    "325": {},
+    "326": {
+      "note": "No numeric loss or Key consumption is specified."
+    },
+    "327": {},
+    "328": {},
+    "329": {},
+    "330": {},
+    "331": {},
+    "332": {},
+    "333": {},
+    "334": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "sixthSense"
+          }
+        },
+        "2": {
+          "when": {
+            "discipline": "camouflage"
+          }
+        }
+      }
+    },
+    "335": {},
     "336": {
       "effects": [
         {
@@ -1815,6 +2067,109 @@
         {
           "op": "combat",
           "combat": 1
+        }
+      ]
+    },
+    "337": {
+      "effects": [
+        {
+          "op": "random"
+        }
+      ],
+      "choices": {
+        "1": {
+          "when": {
+            "random": {
+              "min": 0,
+              "max": 4
+            }
+          }
+        },
+        "2": {
+          "when": {
+            "random": {
+              "min": 5,
+              "max": 9
+            }
+          }
+        }
+      }
+    },
+    "338": {
+      "note": "Existing equipment and Backpack state are retained; no numeric loss or replacement is specified."
+    },
+    "339": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "evade": {
+            "afterRounds": 0,
+            "choice": 3
+          },
+          "maxRounds": 4,
+          "timeout": {
+            "choice": 2
+          }
+        }
+      ],
+      "note": "Victory in round four precedes the timeout; evasion is allowed immediately or later. The escape round can still cause damage."
+    },
+    "340": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0
+        }
+      ],
+      "note": "One combined enemy."
+    },
+    "341": {
+      "choices": {
+        "1": {
+          "when": {
+            "discipline": "tracking"
+          }
+        }
+      }
+    },
+    "342": {
+      "effects": [
+        {
+          "op": "combat",
+          "combat": 0,
+          "mindblastImmune": true,
+          "modifiers": [
+            {
+              "combatSkill": -2,
+              "when": {
+                "not": {
+                  "discipline": "mindshield"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "note": "The penalty applies only to this combat, not base COMBAT SKILL."
+    },
+    "343": {
+      "effects": [
+        {
+          "op": "endurance",
+          "delta": -2
+        }
+      ]
+    },
+    "344": {},
+    "345": {},
+    "346": {
+      "effects": [
+        {
+          "op": "pickup",
+          "items": [
+            "spear"
+          ]
         }
       ]
     },
@@ -1838,6 +2193,7 @@
       ],
       "note": "Footnote 3: any number of Torches, one Backpack slot each, so eight are offered (the Backpack limit)."
     },
+    "348": {},
     "349": {
       "effects": [
         {

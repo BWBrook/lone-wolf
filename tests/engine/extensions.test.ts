@@ -48,6 +48,7 @@ const imported = {
     fight(73, 15, 1000, c(1, 99)),
     plain(74, c(1, 99)),
     plain(75, c(1, 99)),
+    { number: 76, choices: [c(1, 99)], combats: [{ combatSkill: 0, endurance: 1 }, { combatSkill: 15, endurance: 1000 }], deadEnd: false },
     plain(99),
   ],
 };
@@ -64,6 +65,7 @@ const rules = {
     laumspur: { slot: 'backpack', meal: true, use: { endurance: 3 } },
     potion: { slot: 'backpack', use: { endurance: 4, notBeforeCombat: true } },
     rope: { slot: 'backpack' },
+    alether: { slot: 'backpack', use: { combatSkill: 2 } },
     helmet: { slot: 'special', endurance: 2 },
   },
   setup: {
@@ -107,6 +109,8 @@ const rules = {
     '74': { effects: [{ op: 'pickup', items: ['sword', 'dagger'], gold: 6, maxItems: 1 }] },
     // The 307 pattern: a Meal, then a Warhammer only in exchange for a carried weapon.
     '75': { effects: [{ op: 'pickup', items: ['meal'] }, { op: 'tradeWeapon', item: 'warhammer' }] },
+    // The 164 pattern: a potion drunk before a fight, for that fight only.
+    '76': { effects: [{ op: 'combat', combat: 0 }, { op: 'combat', combat: 1 }] },
     '71': { effects: [{ op: 'loseOne', from: 'weapon' }] },
     '72': { choices: { '1': { when: { inventory: { slot: 'backpack', min: 1 } } } } },
     // The 283 pattern: +2 for the first round only, then -2 without Mindshield.
@@ -471,6 +475,32 @@ describe('a weapon exchange (the section 307 pattern)', () => {
   });
 });
 
+describe('a COMBAT SKILL potion (the section 164 pattern)', () => {
+  it('can be drunk only before the first round, adds its bonus to that fight only, and does not stack', () => {
+    expect(availableActions(book, at(1, { backpack: ['alether'] }))).not.toContainEqual({ type: 'use', item: 'alether' });
+    let s = at(76, { backpack: ['alether', 'alether'] });
+    expect(availableActions(book, s)).toContainEqual({ type: 'use', item: 'alether' });
+    const drunk = act(s, { type: 'use', item: 'alether' });
+    expect(drunk.events).toContainEqual({ type: 'boost', item: 'alether', combatSkill: 2 });
+    s = drunk.state;
+    expect(s.character.backpack).toEqual(['alether']);
+    expect(availableActions(book, s)).not.toContainEqual({ type: 'use', item: 'alether' });
+    const round = act(s, { type: 'fight' });
+    expect(round.events.find((e) => e.type === 'combatRound')).toMatchObject({ combatSkill: 17 });
+    s = round.state;
+    expect((s.section!.pending as { bonus: number }).bonus).toBe(0);
+    expect(availableActions(book, s)).toContainEqual({ type: 'use', item: 'alether' });
+    s = act(s, { type: 'fight' }).state;
+    expect(availableActions(book, s)).not.toContainEqual({ type: 'use', item: 'alether' });
+  });
+
+  it('is rejected by the schema with both or neither of its uses', () => {
+    const r = JSON.parse(JSON.stringify(rules));
+    r.items.alether.use = { combatSkill: 2, endurance: 3 };
+    expect(() => buildEngineBook(imported, r)).toThrow(/ENDURANCE or adds COMBAT SKILL/);
+  });
+});
+
 describe('inventory conditions (the section 247 pattern)', () => {
   it('count carried copies in a slot, and nothing for a lost Backpack', () => {
     expect(availableChoices(book, at(72, { backpack: [] }))).toEqual([2]);
@@ -545,9 +575,9 @@ describe('saves and validation', () => {
         x = (Math.imul(x ^ (x >>> 15), 0x2c1b3c6d) + 0x9e3779b9) | 0;
         return xs[(x >>> 0) % xs.length]!;
       };
-      const start = [20, 23, 24, 25, 26, 27, 28, 29, 32, 33, 34, 70, 71, 72, 74, 75][seed % 16]!;
+      const start = [20, 23, 24, 25, 26, 27, 28, 29, 32, 33, 34, 70, 71, 72, 74, 75, 76][seed % 17]!;
       const hasBackpack = seed % 3 > 0;
-      const kit = { backpack: hasBackpack ? ['meal', 'laumspur', 'potion', 'rope'] : [], weapons: ['axe', 'sword'], endurance: 15, hasBackpack };
+      const kit = { backpack: hasBackpack ? ['meal', 'laumspur', 'potion', 'rope', 'alether'] : [], weapons: ['axe', 'sword'], endurance: 15, hasBackpack };
       let s = at(start, kit, seed);
       const actions: Action[] = [];
       for (let i = 0; i < 60 && availableActions(book, s).length; i++) {

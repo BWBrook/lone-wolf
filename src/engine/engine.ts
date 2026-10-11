@@ -83,6 +83,8 @@ export function heroCombatSkill(book: EngineBook, s: GameState, e: CombatEffect)
   if (e.unarmed || c.weapons.length === 0) cs -= 4;
   else if (c.weaponskill && c.weapons.some((w) => weaponKind(book, w) === c.weaponskill)) cs += 2;
   for (const m of e.modifiers ?? []) if (!m.when || holds(book, s, m.when)) cs += m.combatSkill;
+  const pending = s.section?.pending;
+  if (pending?.kind === 'combat') cs += pending.bonus;
   return cs;
 }
 
@@ -258,7 +260,11 @@ export function apply(book: EngineBook, state: GameState, action: Action): { sta
       const def = book.items[action.item];
       c.backpack.splice(c.backpack.indexOf(action.item), 1);
       ev.push({ type: 'itemLost', item: action.item });
-      if (def?.slot === 'backpack' && def.use) changeEndurance(book, s, ev, def.use.endurance, 'item');
+      if (def?.slot === 'backpack' && def.use?.endurance) changeEndurance(book, s, ev, def.use.endurance, 'item');
+      if (def?.slot === 'backpack' && def.use?.combatSkill) {
+        (s.section!.pending as { bonus: number }).bonus += def.use.combatSkill;
+        ev.push({ type: 'boost', item: action.item, combatSkill: def.use.combatSkill });
+      }
       break;
     }
     case 'continue':
@@ -340,7 +346,7 @@ function advance(book: EngineBook, s: GameState, ev: GameEvent[]): void {
         };
         break;
       case 'combat':
-        sec.pending = { kind: 'combat', enemyEndurance: def.combats[e.combat]!.endurance, rounds: 0 };
+        sec.pending = { kind: 'combat', enemyEndurance: def.combats[e.combat]!.endurance, rounds: 0, bonus: 0 };
         sec.hadCombat = true;
         break;
       case 'random':
@@ -494,7 +500,7 @@ function consumeMeal(book: EngineBook, s: GameState, ev: GameEvent[], item: Item
   s.character.backpack.splice(s.character.backpack.indexOf(item), 1);
   ev.push({ type: 'meal', outcome: 'ate', item }, { type: 'itemLost', item });
   const def = book.items[item];
-  if (def?.slot === 'backpack' && def.use) changeEndurance(book, s, ev, def.use.endurance, 'item');
+  if (def?.slot === 'backpack' && def.use?.endurance) changeEndurance(book, s, ev, def.use.endurance, 'item');
 }
 
 function steal(book: EngineBook, s: GameState, ev: GameEvent[], from: Slot, fallback: Slot | undefined): void {
@@ -577,6 +583,8 @@ function hasRoom(book: EngineBook, c: Character, item: ItemId): boolean {
 function canUse(book: EngineBook, s: GameState, item: ItemId): boolean {
   const def = book.items[item];
   if (def?.slot !== 'backpack' || !def.use) return false;
+  const pending = s.section?.pending;
+  if (def.use.combatSkill) return pending?.kind === 'combat' && pending.rounds === 0 && pending.bonus === 0;
   if (s.character.endurance >= maxEndurance(book, s.character)) return false;
   if (!def.use.notBeforeCombat) return true;
   const sec = s.section!;

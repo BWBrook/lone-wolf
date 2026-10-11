@@ -175,8 +175,17 @@ export const ItemDef = z.discriminatedUnion('slot', [
   z.strictObject({
     slot: z.literal('backpack'),
     meal: z.literal(true).optional(),
-    // notBeforeCombat: not during a fight, nor while one is still to come in the section.
-    use: z.strictObject({ endurance: int.positive(), notBeforeCombat: z.literal(true).optional() }).optional(),
+    // endurance: heals when used. notBeforeCombat: not during a fight, nor while one is
+    // still to come in the section. combatSkill: drunk at the start of a fight, before
+    // its first round, for a bonus lasting that fight only (Alether).
+    use: z
+      .strictObject({
+        endurance: int.positive().optional(),
+        notBeforeCombat: z.literal(true).optional(),
+        combatSkill: int.positive().optional(),
+      })
+      .refine((u) => (u.endurance === undefined) !== (u.combatSkill === undefined), 'an item use restores ENDURANCE or adds COMBAT SKILL')
+      .optional(),
   }),
   z.strictObject({ slot: z.literal('special'), endurance: int.positive().optional() }),
 ]);

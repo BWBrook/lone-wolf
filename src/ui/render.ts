@@ -304,6 +304,8 @@ function describe(v: View, e: GameEvent): string | null {
       return 'Your Backpack is gone, with everything in it.';
     case 'backpackGained':
       return 'You have a Backpack again.';
+    case 'boost':
+      return `You drink the ${humanize(e.item)}: ${signed(e.combatSkill)} COMBAT SKILL for this fight.`;
     case 'traded':
       return `You give up the ${humanize(e.gave)} for the ${humanize(e.received)}.`;
     case 'combatSkill':

@@ -57,7 +57,7 @@ export type Pending =
   | { kind: 'trade'; item: ItemId }
   | { kind: 'loseOne'; options: ItemId[] }
   | { kind: 'meal'; options: ItemId[] }
-  | { kind: 'combat'; enemyEndurance: number; rounds: number }
+  | { kind: 'combat'; enemyEndurance: number; rounds: number; bonus: number }
   | { kind: 'random' }
   | { kind: 'choose' };
 
@@ -131,6 +131,7 @@ export type GameEvent =
   | { type: 'backpackLost' }
   | { type: 'backpackGained' }
   | { type: 'traded'; gave: ItemId; received: ItemId }
+  | { type: 'boost'; item: ItemId; combatSkill: number }
   | { type: 'combatSkill'; delta: number; combatSkill: number }
   | { type: 'combatEnded'; combat: number; reason: 'heroLoss' | 'timeout'; to: number }
   | { type: 'died'; cause: 'endurance' | 'deadEnd' | 'effect' }

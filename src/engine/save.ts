@@ -4,7 +4,7 @@ import { DISCIPLINES, ItemIdSchema as ItemId } from './rules';
 import type { EngineBook, GameState, SaveGame } from './types';
 
 // Bump when a change to the engine alters what a recorded action sequence produces.
-export const ENGINE_VERSION = 5;
+export const ENGINE_VERSION = 6;
 
 export class InvalidSave extends Error {}
 export class IncompatibleSave extends Error {}

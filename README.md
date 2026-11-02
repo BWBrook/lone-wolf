@@ -1,5 +1,7 @@
 # Lone Wolf CRPG
 
+> **Status:** developed in the open as a working record. This is work in progress: contents may change, and nothing here is peer-reviewed unless stated.
+
 An open-source, browser-first computer RPG presentation of Joe Dever's *Lone Wolf*
 gamebooks, starting with Book 1, *Flight from the Dark*.
 
@@ -92,7 +94,9 @@ source, rules, engine and harness.
 This repository contains no text or illustrations from the books. The game builds
 its content locally from editions you download yourself from
 [Project Aon](https://www.projectaon.org/), under the
-[Project Aon License](https://www.projectaon.org/en/Main/License).
+[Project Aon License](https://www.projectaon.org/en/Main/License). Keep what
+you import local: do not redistribute the generated `book.json`, builds that
+contain it, or screenshots showing book text or illustrations.
 
 This is an unofficial fan project. It is not affiliated with or endorsed by Project Aon,
 Holmgard Press or the rights holders. *Lone Wolf* and related names belong to their
